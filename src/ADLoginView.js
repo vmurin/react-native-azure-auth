@@ -128,7 +128,7 @@ export default class ADLoginView extends React.Component {
         if (context !== null) {
             let result = `${authUrl}?response_type=code` +
                 `&client_id=${context.getConfig().client_id}` +
-                (redirect ? `&redirect_uri=${encodeURIComponent(context.getConfig().redirect_uri)}` : '') +
+                (redirect ? `&redirect_uri=${context.getConfig().redirect_uri}` : '') +
                 (prompt ? `&prompt=${context.getConfig().prompt}` : '') +
                 (scope ? `&scope=${scope.join(' ')}` : '')
 
