@@ -22,11 +22,11 @@ export default class ReactNativeAD {
 
     constructor(config: ADConfig) {
         if (config === null || config === void 0)
-            throw new Error('ADConfig object is not defined or null.')
+            throw new Error('Azure ADConfig object is not defined or null.')
         if (typeof config.client_id !== 'string')
-            throw new Error('client_id is not provided.')
+            throw new Error('Azure AD app client_id is not provided.')
         if (typeof config.scope !== 'string')
-            throw new Error('scope is not provided.')
+            throw new Error('Azure AD scope is not provided.')
         if (config.tenant != null)
             config.token_uri = defaultTokenUrl.replace('common', config.tenant)
         this.config = config
@@ -44,12 +44,12 @@ export default class ReactNativeAD {
 
 
     getConfig(): ADConfig {
-        log.verbose('getConfig', this.config)
+        log.trace('getConfig', this.config)
         return this.config
     }
 
     getCredentials(): ?ADCredentials {
-        log.verbose('getCredentials', this.tokenCache)
+        log.trace('getCredentials', this.tokenCache)
         return this.tokenCache
     }
 
@@ -65,7 +65,7 @@ export default class ReactNativeAD {
         return new Promise((resolve: Function, reject: Function) => {
 
             let pairs = []
-            log.verbose('saveCredentials', credentials)
+            log.trace('saveCredentials', credentials)
             for (let resource in credentials) {
 
                 if (resource && credentials[resource]) {
@@ -78,7 +78,7 @@ export default class ReactNativeAD {
             Object.assign(this.tokenCache, credentials)
 
             AsyncStorage.multiSet(pairs, (err: Error) => {
-                log.verbose('saveCredentials', 'done', this.tokenCache)
+                log.trace('saveCredentials', 'done', this.tokenCache)
                 if (err)
                     reject(err)
                 else
@@ -159,22 +159,23 @@ export default class ReactNativeAD {
         return new Promise((resolve: Function, reject: Function) => {
             let resourceKey = _getTokenCacheKey(context.config, resourceId)
             let cachedCred = context.tokenCache[resourceId]
-            log.verbose(`_getCachedTokenData:'${resourceId} cached at ${resourceKey}=${cachedCred}`)
+            log.trace(`_getCachedTokenData:'${resourceId} cached at ${resourceKey}=${cachedCred}`)
             // When in memory context not found, check AsyncStorage.
             if (!cachedCred || cachedCred === void 0) {
                 try {
                     AsyncStorage.getItem(resourceKey)
                         .then((credStr: string) => {
-                            log.debug(`_getCachedTokenData from AsyncStorage data=${credStr}`)
+                            log.info(`_getCachedTokenData from AsyncStorage data=${credStr}`)
                             // Do not have any access record about this resource, need manual login
                             let result: ?ReactNativeADCredential = null
                             if (credStr) {
+                                log.info('From cache: ' + credStr)
                                 result = JSON.parse(credStr)
                             }
                             resolve(result)
                         })
                 } catch (err) {
-                    log.debug('async storage err', err)
+                    log.error('async storage err', err)
                     reject(err)
                 }
             }
@@ -203,6 +204,7 @@ export default class ReactNativeAD {
                 }, CONST.AZURE_REQUEST_TIMEOUT)
 
                 let body = `grant_type=${grantType}${_serialize(params)}`
+
                 fetch(this.config.token_uri ? this.config.token_uri : defaultTokenUrl, {
                     method: 'POST',
                     mode: 'cors',
@@ -210,13 +212,15 @@ export default class ReactNativeAD {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
                     body
-                })
-                    .then((response: Object): Promise<GrantTokenResp> => {
+                })  
+                    .then((response: Object): JSON => {
+                        return response.json()
+                    })
+                    .then((responseJson: JSON): Promise<GrantTokenResp> => {
                         Timer.clearTimeout(tm)
-                        let responseText = response.text()
                         let tokenResponse: GrantTokenResp = {
                             scope: _refineScope(params.scope),
-                            response: JSON.parse(responseText)
+                            response: responseJson
                         }
                         // save to memory context
                         this.tokenCache[tokenResponse.scope] = tokenResponse.response
@@ -233,7 +237,7 @@ export default class ReactNativeAD {
                             reject(tokenResponse)
                         }
                     })
-                    .catch(reject)
+                    .catch((err: Error): Promise<GrantTokenResp> => reject(err))
 
             } catch (err) {
                 reject(err)

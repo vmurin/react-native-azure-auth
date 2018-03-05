@@ -7,7 +7,7 @@ export type ADConfig = {
   tenant?: string,
   prompt?: string,
   token_uri?: string,
-  scope: Array<string>
+  scope: string
 };
 
 export type ADCredentials = {

@@ -14,7 +14,7 @@ import React, {
 
 import {ReactNativeAD, ADLoginView, Logger} from 'react-native-azure-ad'
 
-Logger.setLevel('VERBOSE')
+Logger.setLevel('TRACE')
 
 const config = {
   client_id : 'client-id-of-your-app',
