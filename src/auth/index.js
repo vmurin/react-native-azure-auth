@@ -3,6 +3,9 @@ import { validate } from '../utils/validate'
 import { toCamelCase } from '../utils/camel'
 import AuthError from './authError'
 
+import { NativeModules, Platform } from 'react-native'
+const { AzureAuth } = NativeModules
+
 function responseHandler (response, exceptions = {}) {
     if (response.ok && response.json) {
         return toCamelCase(response.json, exceptions)
@@ -19,13 +22,18 @@ function responseHandler (response, exceptions = {}) {
  */
 export default class Auth {
     constructor(options = {}) {
+        const bundleIdentifier = AzureAuth.bundleIdentifier
+        const defaultRedirectUri = `${bundleIdentifier.toLowerCase()}://${bundleIdentifier.toLowerCase()}/${Platform.OS}/callback`
+
+
         this.client = new Client(options)
-        const { clientId } = options
+        const { clientId, redirectUri } = options
         if (!clientId) {
             throw new Error('Missing clientId in parameters')
         }
         this.authorityUrl = this.client.baseUrl
         this.clientId = clientId
+        this.redirectUri = redirectUri || defaultRedirectUri
     }
 
     /**
@@ -47,7 +55,6 @@ export default class Auth {
     loginUrl(parameters = {}) {
         const query = validate({
             parameters: {
-                redirectUri: { required: true, toName: 'redirect_uri' },
                 responseType: { required: true, toName: 'response_type' },
                 scope: { required: true },
                 state: { required: true },
@@ -55,7 +62,11 @@ export default class Auth {
             },
             validate: false // not declared params are allowed: 
         }, parameters)
-        return this.client.url('authorize', {...query, client_id: this.clientId})
+        return this.client.url('authorize', 
+            {...query, 
+                client_id: this.clientId,
+                redirect_uri: this.redirectUri
+            })
     }
 
     /**
@@ -99,7 +110,6 @@ export default class Auth {
         const payload = validate({
             parameters: {
                 code: { required: true },
-                redirectUri: { required: true, toName: 'redirect_uri' },
                 scope: { required: true }
             }
         }, input)
@@ -108,10 +118,10 @@ export default class Auth {
             .post('token', 
                 {...payload, 
                     client_id: this.clientId, 
+                    redirect_uri: this.redirectUri,
                     grant_type: 'authorization_code'})
             .then(responseHandler)
     }
-
 
     /**
    * Obtain new tokens using the Refresh Token obtained during Auth (requesting `offline_access` scope)
@@ -125,23 +135,38 @@ export default class Auth {
    *
    * @memberof Auth
    */
-    refreshToken(parameters = {}) {
+    refreshToken(parameters = {redirectUri: this.redirectUri}) {
         const payload = validate({
             parameters: {
                 refreshToken: { required: true, toName: 'refresh_token' },
-                scope: { required: true },
-                redirectUri: { required: true, toName: 'redirect_uri' },
+                scope: { required: true }
             }
         }, parameters)
         return this.client
             .post('token', {
                 ...payload,
                 client_id: this.clientId,
-                grant_type: 'refresh_token'
+                grant_type: 'refresh_token',
+                redirect_uri: this.redirectUri
             })
             .then(responseHandler)
     }
 
+    /**
+     * Try to obtain token silently without user interaction
+     * 
+     * @param {Object} parameters 
+     */
+    acquireTokenSilent(parameters = {}) {
+        let arr = parameters.scope.split(' ')
+        arr.filter()
+        // try cache 
+        // check validity
+        // try refresh
+
+        // Not possible silently acquire token - user interaction is needed
+        return null
+    }
 
     /**
    * Return user information using an access token

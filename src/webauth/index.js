@@ -1,13 +1,7 @@
 import Agent from './agent'
-import {
-    NativeModules,
-    Platform
-} from 'react-native'
-
 import url from 'url'
 import AuthError from '../auth/authError'
-
-const { AzureAuth } = NativeModules
+import { Platform } from 'react-native'
 
 /**
  * Helper to perform Auth against Auth0 hosted login page
@@ -43,59 +37,60 @@ export default class WebAuth {
    *
    * @memberof WebAuth
    */
-    authorize(options = {}) {
+    async authorize(options = {}) {
         const { clientId, client, agent } = this
-        return agent
-            .generateState()
-            .then( ({state}) => {
-                const bundleIdentifier = AzureAuth.bundleIdentifier
-                const redirectUri = `${bundleIdentifier.toLowerCase()}://${bundleIdentifier.toLowerCase()}/${Platform.OS}/callback`
-                const expectedState = options.state || state
-                const scope = options.scope
+        const {nonce, state} = await agent.generateNonceState()
+        const scope = options.scope
 
-                let query = {
-                    ...options,
-                    clientId,
-                    responseType: 'code',
-                    redirectUri,
-                    state: expectedState
-                }
-                const loginUrl = this.client.loginUrl(query)
-                return agent
-                    .openWeb(loginUrl)
-                    .then((redirectUrl) => {
-                        if (!redirectUrl || !redirectUrl.startsWith(redirectUri)) {
-                            throw new AuthError({
-                                json: {
-                                    error: 'a0.redirect_uri.not_expected',
-                                    error_description: `Expected ${redirectUri} but got ${redirectUrl}`
-                                },
-                                status: 0
-                            })
-                        }
-                        const query = url.parse(redirectUrl, true).query
-                        const {
-                            code,
-                            state: resultState,
-                            error
-                        } = query
+        let requestParams = {
+            ...options,
+            clientId,
+            responseType: 'code id_token',
+            response_mode: 'fragment', // 'query' is unsafe and not supported, the hash fragment is also default
+            redirectUri: client.redirectUri,
+            state: state,
+            nonce: nonce
+        }
+        const loginUrl = this.client.loginUrl(requestParams)
 
-                        if (error) {
-                            throw new AuthError({json: query, status: 0})
-                        }
+        let redirectUrl = await agent.openWeb(loginUrl)
 
-                        if (resultState !== expectedState) {
-                            throw new AuthError({
-                                json: {
-                                    error: 'a0.state.invalid',
-                                    error_description: 'Invalid state recieved in redirect url'
-                                },
-                                status: 0
-                            })
-                        }
-                        return client.exchange({code, redirectUri, scope})
-                    })
+        if (!redirectUrl || !redirectUrl.startsWith(client.redirectUri)) {
+            throw new AuthError({
+                json: {
+                    error: 'a0.redirect_uri.not_expected',
+                    error_description: `Expected ${client.redirectUri} but got ${redirectUrl}`
+                },
+                status: 0
             })
+        }
+
+        // Response is returned in hash, but we want to get parsed object
+        // Query can be parsed, therefore lets replace hash sign with '?' mark
+        redirectUrl = redirectUrl.replace('#','?') // replace only first one
+        const urlHashParsed = url.parse(redirectUrl, true).query
+        const {
+            code,
+            state: resultState,
+            error
+        } = urlHashParsed
+
+        if (error) {
+            throw new AuthError({json: urlHashParsed, status: 0})
+        }
+
+        if (resultState !== state) {
+            throw new AuthError({
+                json: {
+                    error: 'a0.state.invalid',
+                    error_description: 'Invalid state recieved in redirect url'
+                },
+                status: 0
+            })
+        }
+        const credentials = await client.exchange({code, scope})
+        
+        return credentials
     }
 
     /**

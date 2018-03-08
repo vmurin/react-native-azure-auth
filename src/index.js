@@ -1,5 +1,6 @@
 import Auth from './auth'
 import WebAuth from './webauth'
+import { validate } from './utils/validate'
 
 /**
  * AzureAuth for React Native client
@@ -18,6 +19,13 @@ export default class AzureAuth {
    * @memberof AzureAuth
    */
     constructor(options = {}) {
+        validate({
+            parameters: {
+                clientId: { required: true },
+            },
+            validate: false // not declared params are allowed
+        }, options)
+        
         const { tenant = 'common', authorityUrl, clientId, redirectUri, ...extras } = options
         
         this.auth = new Auth({authorityUrl: (authorityUrl ? authorityUrl : `https://login.microsoftonline.com/${tenant}/oauth2/v2.0/`), 

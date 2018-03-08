@@ -28,7 +28,7 @@ export default class Agent {
         })
     }
 
-    generateState() {
+    generateNonceState() {
         if (!NativeModules.AzureAuth) {
             return Promise.reject(new Error('Missing NativeModule. Please make sure you run `react-native link react-native-azure-auth`'))
         }

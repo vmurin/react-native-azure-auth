@@ -36,7 +36,7 @@ RCT_EXPORT_METHOD(showUrl:(NSString *)urlString closeOnLoad:(BOOL)closeOnLoad ca
 }
 
 RCT_EXPORT_METHOD(oauthParameters:(RCTResponseSenderBlock)callback) {
-    callback(@[[self generateState]]);
+    callback(@[[self generateOAuthParameters]]);
 }
 
 - (NSDictionary *)constantsToExport {
@@ -81,8 +81,9 @@ RCT_EXPORT_METHOD(oauthParameters:(RCTResponseSenderBlock)callback) {
     return value;
 }
 
-- (NSDictionary *)generateState {
+- (NSDictionary *)generateOAuthParameters {
     return @{
+             @"nonce": [self randomValue],
              @"state": [self randomValue]
              };
 }

@@ -37,6 +37,7 @@
     "eslint-plugin-jest": "^21.12.2",
     "eslint-plugin-react": "^7.7.0",
     "faker": "^4.1.0",
+    "fetch-mock": "^6.0.1",
     "jest": "^20.0.4",
     "jsdoc": "^3.4.3",
     "jsdoc-to-markdown": "^3.0.0",
@@ -44,6 +45,7 @@
     "prop-types": "^15.6.0"
   },
   "dependencies": {
+    "js-base64": "^2.4.3",
     "url": "^0.11.0"
   }
 }

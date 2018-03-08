@@ -1,5 +1,5 @@
 project.ext {
-    buildToolsVersion = "23.0.1"
+    buildToolsVersion = "26.0.2"
 }
 
 buildscript {
@@ -34,7 +34,7 @@ repositories {
 }
 
 dependencies {
-    compile 'com.facebook.react:react-native:+'
-    compile "com.android.support:customtabs:${project.ext.buildToolsVersion}"
+    implementation 'com.facebook.react:react-native:+'
+    implementation 'com.android.support:customtabs:23.+'
 }
 

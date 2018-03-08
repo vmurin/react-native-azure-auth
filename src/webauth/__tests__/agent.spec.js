@@ -86,19 +86,19 @@ describe('Agent', () => {
         })
     })
 
-    describe('generateState', () => {
+    describe('generateNonceState', () => {
 
         it('should call native integration', async () => {
             const parameters = {state: 'state'}
             AzureAuth.parameters = parameters
             expect.assertions(1)
-            await expect(agent.generateState()).resolves.toMatchSnapshot()
+            await expect(agent.generateNonceState()).resolves.toMatchSnapshot()
         })
 
         it('should fail if native module is not linked', async () => {
             NativeModules.AzureAuth = undefined
             expect.assertions(1)
-            await expect(agent.generateState()).rejects.toMatchSnapshot()
+            await expect(agent.generateNonceState()).rejects.toMatchSnapshot()
         })
 
     })

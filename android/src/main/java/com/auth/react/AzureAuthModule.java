@@ -68,6 +68,7 @@ public class AzureAuthModule extends ReactContextBaseJavaModule implements Lifec
     public void oauthParameters(Callback callback) {
         final WritableMap parameters = Arguments.createMap();
         parameters.putString("state", this.generateRandomValue());
+        parameters.putString("nonce", this.generateRandomValue());
         callback.invoke(parameters);
     }
 
