@@ -17,7 +17,7 @@ Install `react-native-azure-auth` using [npm](https://www.npmjs.com)
 npm install react-native-azure-auth --save
 ```
 
-Or via [yarn](https://yarnpkg.com/en/package/jest)
+Or via [yarn](https://yarnpkg.com/) (recommended)
 
 ```bash
 yarn add react-native-azure-auth
