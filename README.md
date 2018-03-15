@@ -2,12 +2,9 @@
 
 React Native library implementing Azure AD OAuth2 API
 
-## Preface
-
-This project was originally inspired by [https://github.com/auth0/react-native-azure-auth](https://github.com/auth0/react-native-azure-auth) and extensively re-worked to use the __V2.0__ version of the [Azure AD endponts](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-compare).
-Also the token cache functionality is added.
+The library uses the latest __V2.0__ version of the [Azure AD endponts](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-compare) and provides token cache functionality.
 `react-native-azure-auth` implements authentication flow using `fetch` API and native components.
-You can use both web application flow and mobile (native) application client_id with this module.
+The OpenID connect and `autorization_code` grant are implemented.
 
 ## Installation
 
@@ -195,6 +192,10 @@ If you have found a bug or if you have a feature request, please report them at 
 ## Author
 
 [Vladimir Murin](https://github.com/vmurin)
+
+## Credits
+
+This project was originally inspired by [https://github.com/auth0/react-native-auth0](https://github.com/auth0/react-native-auth0)
 
 ## License
 
