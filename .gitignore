@@ -4,6 +4,7 @@ build/
 
 out/
 package-lock.json
+coverage/
 
 # Logs
 logs
