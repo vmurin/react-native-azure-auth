@@ -1,0 +1,73 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`auth code exchange should handle oauth error 1`] = `[invalid_request: Invalid grant]`;
+
+exports[`auth code exchange should handle unexpected error 1`] = `[aad.response.invalid: Internal Server Error]`;
+
+exports[`auth code exchange should return successful response 1`] = `
+Object {
+  "accessToken": "an access token",
+  "expiresIn": 1234567890,
+  "idToken": "an id token",
+  "scope": "openid",
+  "state": "a random state for auth",
+}
+`;
+
+exports[`auth code exchange should send correct payload 1`] = `
+Array [
+  "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+  Object {
+    "body": "&code=a%20code&scope=openid&client_id=A_CLIENT_ID_OF_YOUR_ACCOUNT&redirect_uri=my_bundle_id%3A%2F%2Fmy_bundle_id%2FSomeMobile%2Fcallback&grant_type=authorization_code",
+    "headers": Object {
+      "Accept": "application/json, image/*;q=0.1",
+      "Content-Length": 166,
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    "method": "POST",
+  },
+]
+`;
+
+exports[`auth constructor should fail without authority 1`] = `"Missing Azure authority base URL"`;
+
+exports[`auth constructor should fail without clientId 1`] = `"Missing clientId in parameters"`;
+
+exports[`auth loginUrl should return default authorize url 1`] = `"https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=code&scope=offline_access%20openid%20profile&state=a_random_state&client_id=A_CLIENT_ID_OF_YOUR_ACCOUNT&redirect_uri=my_bundle_id%3A%2F%2Fmy_bundle_id%2FSomeMobile%2Fcallback"`;
+
+exports[`auth loginUrl should return default authorize url with extra parameters 1`] = `"https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=code&scope=offline_access%20openid%20profile&state=a_random_state&connection=facebook&client_id=A_CLIENT_ID_OF_YOUR_ACCOUNT&redirect_uri=my_bundle_id%3A%2F%2Fmy_bundle_id%2FSomeMobile%2Fcallback"`;
+
+exports[`auth logoutUrl should return default logout url 1`] = `"https://login.microsoftonline.com/common/oauth2/v2.0/logout?redirect_uri="`;
+
+exports[`auth logoutUrl should return logout url with extra parameters 1`] = `"https://login.microsoftonline.com/common/oauth2/v2.0/logout?redirect_uri=https%3A%2F%2Fbing.com&post_logout_redirect_uri=https%3A%2F%2Fbing.com"`;
+
+exports[`auth logoutUrl should return logout url with skipping unknown parameters 1`] = `"https://login.microsoftonline.com/common/oauth2/v2.0/logout?redirect_uri=https%3A%2F%2Fbing.com&post_logout_redirect_uri=https%3A%2F%2Fbing.com"`;
+
+exports[`auth refresh token should handle oauth error 1`] = `null`;
+
+exports[`auth refresh token should handle unexpected error 1`] = `null`;
+
+exports[`auth refresh token should return successful response 1`] = `
+Object {
+  "accessToken": "an access token",
+  "expiresIn": 1234567890,
+  "idToken": "an id token",
+  "scope": "openid",
+  "state": "a random state for auth",
+}
+`;
+
+exports[`auth refresh token should send correct payload 1`] = `
+Array [
+  "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+  Object {
+    "body": "&refresh_token=a%20refresh%20token%20of%20a%20user&scope=offline_access%20openid%20profile&client_id=A_CLIENT_ID_OF_YOUR_ACCOUNT&grant_type=refresh_token&redirect_uri=my_bundle_id%3A%2F%2Fmy_bundle_id%2FSomeMobile%2Fcallback",
+    "headers": Object {
+      "Accept": "application/json, image/*;q=0.1",
+      "Content-Length": 224,
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    "method": "POST",
+  },
+]
+`;

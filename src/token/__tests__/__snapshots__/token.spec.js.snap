@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`token actions should correctly extract Id token 1`] = `
+Object {
+  "aio": "ATQAy/8GAAAAVFpo9Rc4ClmmrPaZqzxM9/gbFohf8FNd/p6MxJF5IL99OlGDDy1Ys+PyizDi8csm",
+  "aud": "b5d120f6-04fb-481a-88f6-bc2dfd44fda7",
+  "exp": 1520528361,
+  "iat": 1520524461,
+  "iss": "https://login.microsoftonline.com/31f1b789-90e3-442a-acd2-d6ae8c8bda31/v2.0",
+  "name": "Vladimir Murin (Extern)",
+  "nbf": 1520524461,
+  "nonce": "Y9ayb6hPJKofgAvLSlm9LUU7NCWf1U6dVkvVpTtsrPE",
+  "oid": "d45978f0-95f3-44d2-bb9e-ce986c3ed275",
+  "preferred_username": "vladimir.murin.extern@porsche.digital",
+  "sub": "hBkvURcWfsrHlsCj-BAVpbSMDOYQ_seWL3nLT5EdIjs",
+  "tid": "31f1b789-90e3-442a-acd2-d6ae8c8bda31",
+  "uti": "4z7GwjPnsUCMAsur74UMAA",
+  "ver": "2.0",
+}
+`;
