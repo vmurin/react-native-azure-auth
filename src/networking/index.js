@@ -27,7 +27,7 @@ function serializeParams(params) {
  * @class Client
  */
 export default class Client {
-    constructor(options) {
+    constructor(options = {}) {
         const {authorityUrl, baseUrl, token} = options
 
         if (!(baseUrl || authorityUrl)) { throw new Error('Missing Azure authority base URL') }
@@ -66,9 +66,9 @@ export default class Client {
      * 
      * @param {String} method 
      * @param {String} url 
-     * @param {Object} body 
+     * @param {Object} [body] - request body
      */
-    request(method, url, body) {
+    async request(method, url, body) {
         const options = {
             method: method,
             headers: {
@@ -84,22 +84,19 @@ export default class Client {
             options.body = serializeParams(body)
             options.headers['Content-Length'] = options.body.length
         }
-        return fetch(url, options)
-            .then((response) => {
-                const payload = { status: response.status, ok: response.ok, headers: response.headers.map }
-                return response.json()
-                    .then((json) => {
-                        return { ...payload, json }
-                    })
-                    .catch(() => {
-                        return response.text()
-                            .then((text) => {
-                                return { ...payload, text }
-                            })
-                            .catch(() => {
-                                return { ...payload, text: response.statusText }
-                            })
-                    })
-            })
+
+        let response = await fetch(url, options)
+        const payload = { status: response.status, ok: response.ok, headers: response.headers }
+        try {
+            const json = await response.json()
+            return { ...payload, json }
+        } catch (error) {
+            try {
+                const text = await response.text()
+                return { ...payload, text }
+            } catch (err) {
+                return { ...payload, text: response.statusText }
+            }
+        }
     }
 }

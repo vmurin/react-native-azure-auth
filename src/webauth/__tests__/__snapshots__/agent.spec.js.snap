@@ -8,7 +8,7 @@ Object {
 
 exports[`Agent generateNonceState should fail if native module is not linked 1`] = `[Error: Missing NativeModule. Please make sure you run \`react-native link react-native-azure-auth\`]`;
 
-exports[`Agent show complete web flow should resolve promise with url result 1`] = `"https://auth0.com"`;
+exports[`Agent show complete web flow should resolve promise with url result 1`] = `"https://developer.microsoft.com/en-us/"`;
 
 exports[`Agent show failed flow should reject with error 1`] = `[Error: failed to load]`;
 

@@ -1,10 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`client constructor should fail with no tenant 1`] = `"Cannot read property 'authorityUrl' of undefined"`;
+exports[`client constructor should fail with no baseUrl 1`] = `"Missing Azure authority base URL"`;
+
+exports[`client constructor should fail with no baseUrl 2`] = `"Missing Azure authority base URL"`;
 
 exports[`client requests GET json should build proper request with no query 1`] = `
 Array [
-  "https://samples.auth0.com/method",
+  "https://contoso.onmicrosoft.com/method",
   Object {
     "headers": Object {
       "Accept": "application/json, image/*;q=0.1",
@@ -18,7 +20,7 @@ Array [
 
 exports[`client requests GET json should build proper request with query 1`] = `
 Array [
-  "https://samples.auth0.com/method?string=value&number=10",
+  "https://contoso.onmicrosoft.com/method?string=value&number=10",
   Object {
     "headers": Object {
       "Accept": "application/json, image/*;q=0.1",
@@ -32,16 +34,29 @@ Array [
 
 exports[`client requests GET json should handle no response 1`] = `
 Object {
-  "headers": undefined,
+  "headers": Headers {
+    "_headers": Object {},
+  },
   "ok": true,
   "status": 201,
   "text": "Created",
 }
 `;
 
+exports[`client requests GET json should handle request error 1`] = `[Error: pawned!]`;
+
 exports[`client requests GET json should return json on success 1`] = `
 Object {
-  "headers": undefined,
+  "headers": Headers {
+    "_headers": Object {
+      "content-length": Array [
+        "15",
+      ],
+      "content-type": Array [
+        "application/json",
+      ],
+    },
+  },
   "json": Object {
     "key": "value",
   },
@@ -52,7 +67,7 @@ Object {
 
 exports[`client requests PATCH json should build proper request with body 1`] = `
 Array [
-  "https://samples.auth0.com/method",
+  "https://contoso.onmicrosoft.com/method",
   Object {
     "body": "&string=value&number=10",
     "headers": Object {
@@ -68,7 +83,7 @@ Array [
 
 exports[`client requests PATCH json should build proper request with no body 1`] = `
 Array [
-  "https://samples.auth0.com/method",
+  "https://contoso.onmicrosoft.com/method",
   Object {
     "headers": Object {
       "Accept": "application/json, image/*;q=0.1",
@@ -82,16 +97,29 @@ Array [
 
 exports[`client requests PATCH json should handle no response 1`] = `
 Object {
-  "headers": undefined,
+  "headers": Headers {
+    "_headers": Object {},
+  },
   "ok": true,
   "status": 201,
   "text": "Created",
 }
 `;
 
+exports[`client requests PATCH json should handle request error 1`] = `[Error: pawned!]`;
+
 exports[`client requests PATCH json should return json on success 1`] = `
 Object {
-  "headers": undefined,
+  "headers": Headers {
+    "_headers": Object {
+      "content-length": Array [
+        "15",
+      ],
+      "content-type": Array [
+        "application/json",
+      ],
+    },
+  },
   "json": Object {
     "key": "value",
   },
@@ -102,7 +130,7 @@ Object {
 
 exports[`client requests POST json should build proper request with body 1`] = `
 Array [
-  "https://samples.auth0.com/method",
+  "https://contoso.onmicrosoft.com/method",
   Object {
     "body": "&string=value&number=10",
     "headers": Object {
@@ -118,7 +146,7 @@ Array [
 
 exports[`client requests POST json should build proper request with no body 1`] = `
 Array [
-  "https://samples.auth0.com/method",
+  "https://contoso.onmicrosoft.com/method",
   Object {
     "headers": Object {
       "Accept": "application/json, image/*;q=0.1",
@@ -132,16 +160,29 @@ Array [
 
 exports[`client requests POST json should handle no response 1`] = `
 Object {
-  "headers": undefined,
+  "headers": Headers {
+    "_headers": Object {},
+  },
   "ok": true,
   "status": 201,
   "text": "Created",
 }
 `;
 
+exports[`client requests POST json should handle request error 1`] = `[Error: pawned!]`;
+
 exports[`client requests POST json should return json on success 1`] = `
 Object {
-  "headers": undefined,
+  "headers": Headers {
+    "_headers": Object {
+      "content-length": Array [
+        "15",
+      ],
+      "content-type": Array [
+        "application/json",
+      ],
+    },
+  },
   "json": Object {
     "key": "value",
   },
@@ -150,6 +191,6 @@ Object {
 }
 `;
 
-exports[`client url should build url with no query 1`] = `"https://samples.auth0.com/authorize"`;
+exports[`client url should build url with no query 1`] = `"https://contoso.onmicrosoft.com/authorize"`;
 
-exports[`client url should build url with query 1`] = `"https://samples.auth0.com/authorize?client_id=A_CLIENT_ID"`;
+exports[`client url should build url with query 1`] = `"https://contoso.onmicrosoft.com/authorize?client_id=A_CLIENT_ID"`;

@@ -1,0 +1,22 @@
+import BaseTokenItem from './baseTokenItem'
+
+export default class RefreshTokenItem extends BaseTokenItem{
+    constructor(tokenResponse, clientId) {
+        if (!tokenResponse.refreshToken) {
+            throw new Error('Invalid token response. Can not create refresh token.')
+        }
+        
+        super(tokenResponse, clientId)
+        this.refreshToken = tokenResponse.refreshToken
+    }
+
+    tokenKey() {
+        return BaseTokenItem.createRefreshTokenKey(this.clientId, this.userId)
+    }
+
+    static fromJson(objStr) {
+        let obj = Object.create(RefreshTokenItem.prototype)
+        return Object.assign(obj, JSON.parse(objStr))
+    }
+    
+}

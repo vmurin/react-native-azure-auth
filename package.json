@@ -1,7 +1,7 @@
 {
   "name": "react-native-azure-auth",
-  "version": "0.0.1",
-  "description": "A Azure AD authentication V2.0 library implementation uses pure react native API (no native library needed).",
+  "version": "1.0.0",
+  "description": "An React Native module implements Azure AD V2.0 authentication flow",
   "main": "src/index.js",
   "scripts": {
     "test": "jest",
@@ -18,7 +18,8 @@
     "authentication",
     "active directory",
     "react-native",
-    "oauth"
+    "oauth",
+    "oauth2"
   ],
   "repository": {
     "url": "https://github.com/vmurin/react-native-azure-auth.git"
@@ -29,23 +30,23 @@
     "@types/jest": "^19.2.4",
     "babel-eslint": "^8.2.2",
     "babel-jest": "^20.0.3",
+    "babel-plugin-transform-builtin-extend": "^1.1.2",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react-native": "^1.9.2",
     "codecov": "^2.2.0",
-    "eslint": "^4.18.1",
-    "eslint-plugin-flowtype": "^2.46.1",
-    "eslint-plugin-jest": "^21.12.2",
+    "eslint": "^4.18.2",
+    "eslint-plugin-jest": "^21.14.0",
     "eslint-plugin-react": "^7.7.0",
     "faker": "^4.1.0",
     "fetch-mock": "^6.0.1",
-    "jest": "^20.0.4",
+    "jest": "22.4",
     "jsdoc": "^3.4.3",
     "jsdoc-to-markdown": "^3.0.0",
     "minami": "^1.2.3",
     "prop-types": "^15.6.0"
   },
   "dependencies": {
-    "js-base64": "^2.4.3",
+    "js-base64": "github:vmurin/js-base64",
     "url": "^0.11.0"
   }
 }

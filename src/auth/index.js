@@ -2,8 +2,12 @@ import Client from '../networking'
 import { validate } from '../utils/validate'
 import { toCamelCase } from '../utils/camel'
 import AuthError from './authError'
+import TokenCache from '../token/cache'
+import log from '../utils/logger'
 
 import { NativeModules, Platform } from 'react-native'
+import Scope from '../token/scope'
+
 const { AzureAuth } = NativeModules
 
 function responseHandler (response, exceptions = {}) {
@@ -27,10 +31,11 @@ export default class Auth {
 
 
         this.client = new Client(options)
-        const { clientId, redirectUri } = options
+        const { clientId, redirectUri, persistentCache } = options
         if (!clientId) {
             throw new Error('Missing clientId in parameters')
         }
+        this.cache = new TokenCache( {clientId, persistent: persistentCache} )
         this.authorityUrl = this.client.baseUrl
         this.clientId = clientId
         this.redirectUri = redirectUri || defaultRedirectUri
@@ -72,37 +77,32 @@ export default class Auth {
     /**
    * Builds the full logout endpoint url in the Authorization Server (AS) with given parameters.
    *
-   * @param {Object} parameters parameters to send to `/v2/logout`
-   * @param {Boolean} [parameters.federated] if the logout should include removing session for federated IdP.
-   * @param {String} [parameters.clientId] client identifier of the one requesting the logout
-   * @param {String} [parameters.returnTo] url where the user is redirected to after logout. It must be declared in you Auth0 Dashboard
+   * @param {Object} parameters parameters to send to `/logout`
+   * @param {String} [parameters.redirectUri] url where the user is redirected to after logout. It must be declared in you App Registration
    * @returns {String} logout url with specified parameters
-   * @see https://auth0.com/docs/api/authentication#logout
    *
    * @memberof Auth
    */
     logoutUrl(parameters = {}) {
         const query = validate({
             parameters: {
-                federated: { required: false },
-                clientId: { required: false, toName: 'client_id' },
-                returnTo: { required: false }
+                redirectUri: { required: false, toName: 'post_logout_redirect_uri' }
             }
         }, parameters)
-        // https://login.microsoftonline.com/${this.props.context.getConfig().client_id}/oauth2/v2.0/logout
-        return this.client.url('/v2/logout', {...query})
+        // https://login.microsoftonline.com/common/oauth2/logout?post_logout_redirect_uri=[URI]&redirect_uri=[URI]
+        return this.client.url('logout', {redirect_uri: query.post_logout_redirect_uri, ...query})
     }
 
     /**
    * Exchanges a code obtained via `/authorize` for the access tokens
    *
-   * @param {Object} parameters parameters used to obtain tokens from a code
-   * @param {String} parameters.code code returned by `/authorize`.
-   * @param {String} parameters.redirectUri original redirectUri used when calling `/authorize`.
-   * @param {String} parameters.scope A space-separated list of scopes. 
+   * @param {Object} input input used to obtain tokens from a code
+   * @param {String} input.code code returned by `/authorize`.
+   * @param {String} input.redirectUri original redirectUri used when calling `/authorize`.
+   * @param {String} input.scope A space-separated list of scopes. 
    *    The scopes requested in this leg must be equivalent to or a subset of the scopes requested in the first leg
    * @returns {Promise}
-   * @see https://auth0.com/docs/api-auth/grant/authorization-code-pkce
+   * @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-protocols-oauth-code#request-an-access-token
    *
    * @memberof Auth
    */
@@ -124,32 +124,43 @@ export default class Auth {
     }
 
     /**
-   * Obtain new tokens using the Refresh Token obtained during Auth (requesting `offline_access` scope)
+   * Obtain new tokens (access and id) using the Refresh Token obtained during Auth (requesting `offline_access` scope)
    *
    * @param {Object} parameters refresh token parameters
    * @param {String} parameters.refreshToken user's issued refresh token
    * @param {String} parameters.scope scopes requested for the issued tokens.
-   * @param {String} parameters.redirectUri the same redirect_uri value that was used to acquire the authorization_code.
+   * @param {String} [parameters.redirectUri] the same redirect_uri value that was used to acquire the authorization_code.
    * @returns {Promise}
-   * @see https://auth0.com/docs/tokens/refresh-token/current#use-a-refresh-token
+   * @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-protocols-oauth-code#refresh-the-access-token
    *
    * @memberof Auth
    */
-    refreshToken(parameters = {redirectUri: this.redirectUri}) {
+    refreshTokens(parameters = {redirectUri: this.redirectUri}) {
         const payload = validate({
             parameters: {
                 refreshToken: { required: true, toName: 'refresh_token' },
                 scope: { required: true }
             }
         }, parameters)
+        const scope = new Scope(payload.scope)
         return this.client
             .post('token', {
                 ...payload,
                 client_id: this.clientId,
                 grant_type: 'refresh_token',
-                redirect_uri: this.redirectUri
+                redirect_uri: this.redirectUri,
+                scope: scope.toString()
             })
-            .then(responseHandler)
+            .then((response) => {
+                if (response.ok && response.json) {
+                    return toCamelCase(response.json)
+                } else {
+                    // on missing consent Azure also answers with HTTP 400 code
+                    // Error: AADSTS65001, response.json.error_codes[0] == 65001
+                    log.error('Could not refresh token: ', response)
+                    return Promise.reject(null)
+                }
+            })
     }
 
     /**
@@ -157,14 +168,38 @@ export default class Auth {
      * 
      * @param {Object} parameters 
      */
-    acquireTokenSilent(parameters = {}) {
-        let arr = parameters.scope.split(' ')
-        arr.filter()
-        // try cache 
-        // check validity
-        // try refresh
+    async acquireTokenSilent(parameters = {}) {
+        const input = validate({
+            parameters: {
+                userId: { required: true},
+                scope: { required: true }
+            }
+        }, parameters)
+        const scope = new Scope(input.scope)   
+
+        try {
+            let accessToken = await this.cache.getAccessToken(input.userId, scope)
+            if (accessToken && !accessToken.isExpired()) {
+                return accessToken
+            }
+            let refreshToken = await this.cache.getRefreshToken(input.userId)
+            if (refreshToken) {
+                const tokenResponse = await this.refreshTokens(refreshToken, scope)
+                if (tokenResponse && tokenResponse.refreshToken) {
+                    this.cache.saveRefreshToken(tokenResponse)
+                }
+                if (tokenResponse && tokenResponse.accessToken) {
+                    accessToken = await this.cache.saveAccessToken(tokenResponse)
+                    return accessToken
+                }
+            }
+        } catch (error) {
+            console.error('Error in silent request: ', error)
+            //return error
+        }
 
         // Not possible silently acquire token - user interaction is needed
+        // Resolve Promise with null - token is not found for given scope
         return null
     }
 
@@ -173,20 +208,25 @@ export default class Auth {
    *
    * @param {Object} parameters user info parameters
    * @param {String} parameters.token user's access token
+   * @param {String} parameters.path - MS Graph API Path
    * @returns {Promise}
+   * @see https://developer.microsoft.com/en-us/graph/docs/concepts/overview
    * @see https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/api/user_get
    * @memberof Auth
    */
-    msGraphUserInfo(parameters = {}) {
+    msGraphRequest(parameters = {}) {
         const baseUrl = 'https://graph.microsoft.com/v1.0/'
         const payload = validate({
             parameters: {
-                token: { required: true },
+                path: { required: true },
+                token: { required: true }
             }
         }, parameters)
         const client = new Client({baseUrl, token: payload.token})
+        // remove leading and trailing slashes
+        const clearedPath = payload.path.replace(/^\//,'').replace(/\/$/,'')
         return client
-            .get('me') // get info for currently authorized user
+            .get(clearedPath) // get info for currently authorized user
             .then(responseHandler)
     }
 

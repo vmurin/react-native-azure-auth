@@ -2,9 +2,11 @@ import Agent from './agent'
 import url from 'url'
 import AuthError from '../auth/authError'
 import { Platform } from 'react-native'
+import Scope from '../token/scope'
+import BaseTokenItem from '../token/baseTokenItem'
 
 /**
- * Helper to perform Auth against Auth0 hosted login page
+ * Helper to perform Auth against Azure AD login page
  *
  * It will use `/authorize` endpoint of the Authorization Server (AS)
  * with Code Grant 
@@ -27,24 +29,24 @@ export default class WebAuth {
    *
    * In iOS it will use `SFSafariViewController` and in Android Chrome Custom Tabs.
    *
-   * @param {Object} parameters parameters to send
-   * @param {String} [parameters.state] random string to prevent CSRF attacks and used to discard unexepcted results. By default its a cryptographically secure random.
-   * @param {String} [parameters.nonce] random string to prevent replay attacks of id_tokens.
-   * @param {String} [parameters.audience] identifier of Resource Server (RS) to be included as audience (aud claim) of the issued access token
-   * @param {String} [parameters.scope] scopes requested for the issued tokens. e.g. `openid profile`
-   * @returns {Promise}
-   * @see https://auth0.com/docs/api/authentication#authorize-client
+   * @param {Object} options parameters to send
+   * @param {String} [options.scope] scopes requested for the issued tokens. 
+   *    OpenID Connect scopes are always added to every request. `openid profile offline_access`
+   *    @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes
+   * @returns {Promise<BaseTokenItem | AccessTokenItem>}
    *
    * @memberof WebAuth
    */
     async authorize(options = {}) {
+        const scope = new Scope(options.scope)
+
         const { clientId, client, agent } = this
         const {nonce, state} = await agent.generateNonceState()
-        const scope = options.scope
 
         let requestParams = {
             ...options,
             clientId,
+            scope: scope.toString(),
             responseType: 'code id_token',
             response_mode: 'fragment', // 'query' is unsafe and not supported, the hash fragment is also default
             redirectUri: client.redirectUri,
@@ -88,16 +90,25 @@ export default class WebAuth {
                 status: 0
             })
         }
-        const credentials = await client.exchange({code, scope})
-        
-        return credentials
+        const tokenResponse = await client.exchange({code, scope: scope.toString()})
+        if (tokenResponse.refreshToken) {
+            this.client.cache.saveRefreshToken(tokenResponse)
+        }
+        if (tokenResponse.accessToken) {
+            let accessToken = await this.client.cache.saveAccessToken(tokenResponse)
+            return accessToken
+        } else {
+            // we have to have at least id_token in respose
+            return new BaseTokenItem(tokenResponse, this.clientId)
+        }
     }
 
+    
     /**
    *  Removes Azure session
    *  In iOS it will use `SFSafariViewController`
    *
-   * @param {Object} parameters parameters to send
+   * @param {Object} options parameters to send
    * @returns {Promise}
    *
    * @memberof WebAuth

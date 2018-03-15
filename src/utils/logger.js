@@ -1,4 +1,3 @@
-// @flow
 /* eslint no-console: 0 */ 
 const levels = {
     ERROR : 4,
@@ -7,7 +6,7 @@ const levels = {
     DEBUG : 1,
     TRACE : 0,
 }
-let level = 0
+let level = 0 // default level
 
 export default {
 
@@ -19,7 +18,7 @@ export default {
    */
     setLevel: (val: string) => {
         console.log('log level set to ', val)
-        level = levels[val]
+        level = levels[val.toUpperCase()]
     },
 
     trace: (...args: any) => {

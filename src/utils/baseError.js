@@ -1,3 +1,10 @@
+/**
+ * Base error class needs `babel-plugin-transform-builtin-extend` for correct function
+ * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error
+ * @param {String} name - error name
+ * @param {String} message 
+ */
+
 export default class BaseError extends Error {
     constructor (name, message) {
         super()

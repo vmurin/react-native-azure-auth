@@ -21,7 +21,7 @@ export default class ParameterError extends BaseError {
             nonce: {required: false}, // not required
             clientId: {toName: 'client_id'}, // key name transform rule
         },
-        validate: true | false
+        validate: true | false // if true - pass through only declared params 
         aliases: {
             connection: 'realm',
             clientID: 'clientId'
