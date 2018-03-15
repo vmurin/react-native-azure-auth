@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>utils/validate.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AzureAuth.html">AzureAuth</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Client.html">Client</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module.exports.html">exports</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module.exports.html#.setLevel">setLevel</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="WebAuth.html">WebAuth</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="WebAuth.html#.authorize">authorize</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="WebAuth.html#.clearSession">clearSession</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#request">request</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#serializeParams">serializeParams</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#validate">validate</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">utils/validate.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import BaseError from './baseError'
+
+export default class ParameterError extends BaseError {
+    constructor (expected, actual, missing) {
+        super('Missing required parameters', `Missing required parameters: ${JSON.stringify(missing, null, 2)}`)
+        this.expected = expected
+        this.actual = actual
+        this.missing = missing
+    }
+}
+
+/**
+ * Applies the validtion and transform rules to the given values
+ * 
+ * Possible rules:
+ * 
+ *     const rules = {
+        parameters: {
+            realm: {} // just declared without rules, not required by default
+            state: {required: true}, // required
+            nonce: {required: false}, // not required
+            clientId: {toName: 'client_id'}, // key name transform rule
+        },
+        validate: true | false // if true - pass through only declared params 
+        aliases: {
+            connection: 'realm',
+            clientID: 'clientId'
+        }
+    }
+ * Actions:
+ * - removes not declared in rules values (can be disabled by 'validate: false' parameter)
+ * - checks if all required values are exist in values ('required: true')
+ * - all values are optional by default (without "required" rule)
+ * 
+ * @param { Object } rules 
+ * @param { Object } values 
+ */
+export function validate(rules, values) {
+    const { validate = true, parameters, aliases = {} } = rules
+    let mapped = {}
+    let requiredKeys = Object
+        .keys(parameters)
+        .filter((key) => parameters[key].required)
+        .map((key) => parameters[key].toName || key)
+
+    for (let key of Object.keys(values)) {
+        let value = values[key]
+        let parameterKey = aliases[key] || key
+        let parameter = parameters[parameterKey]
+        if (parameter &amp;&amp; value) {
+            mapped[parameter.toName || parameterKey] = value
+        } else if (value &amp;&amp; !validate) {
+            mapped[key] = value
+        }
+    }
+
+    let missing = requiredKeys.filter((key) => !mapped[key])
+    if (missing.length > 0) {
+        throw new ParameterError(requiredKeys, values, missing)
+    }
+    return mapped
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Mar 15 2018 22:55:44 GMT+0200 (Mitteleuropäische Sommerzeit) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

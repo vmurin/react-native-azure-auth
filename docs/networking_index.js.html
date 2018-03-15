@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>networking/index.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AzureAuth.html">AzureAuth</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Client.html">Client</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module.exports.html">exports</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module.exports.html#.setLevel">setLevel</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="WebAuth.html">WebAuth</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="WebAuth.html#.authorize">authorize</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="WebAuth.html#.clearSession">clearSession</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#request">request</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#serializeParams">serializeParams</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#validate">validate</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">networking/index.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import url from 'url'
+
+/**
+ * Helper function to serialize object into urlencoded form data string, properties
+ * which value is either `null` or `undefined` will be ignored.
+ * @param  {Object} params Object which contains props.
+ * @return {string} Result form data string.
+ */
+function serializeParams(params) {
+    let paramStr = ''
+    for (let prop in params) {
+        if (params[prop] !== null &amp;&amp; params[prop] !== void 0)
+            paramStr += `&amp;${prop}=${encodeURIComponent(params[prop])}`
+    }
+    return paramStr
+}
+
+/**
+ * Helper to perform HTTP requests
+ * Blob (binary) content types are not supported
+ * 
+ * Class variables:
+ * - baseUrl | authorityUrl: base URL the request path is added to
+ * - token: Auth token if the request needs authorization
+ * 
+ * @export
+ * @class Client
+ */
+export default class Client {
+    constructor(options = {}) {
+        const {authorityUrl, baseUrl, token} = options
+
+        if (!(baseUrl || authorityUrl)) { throw new Error('Missing Azure authority base URL') }
+        const parsed = url.parse(baseUrl || authorityUrl)
+        this.baseUrl = parsed.protocol === 'https:' || parsed.protocol === 'http:' ? (baseUrl || authorityUrl) : `https://${(baseUrl || authorityUrl)}`
+        if (token) {
+            this.bearer = `Bearer ${token}`
+        }
+    }
+
+    post(path, body) {
+        let url = this.url(path)
+        return this.request('POST', url, body)
+    }
+
+    patch(path, body) {
+        return this.request('PATCH', this.url(path), body)
+    }
+
+    get(path, query) {
+        return this.request('GET', this.url(path, query))
+    }
+
+    url(path, query) {
+        let endpoint = url.resolve(this.baseUrl, path)
+        if (query &amp;&amp; query.length !== 0) {
+            const parsed = url.parse(endpoint)
+            parsed.query = query || {}
+            endpoint = url.format(parsed)
+        }
+        return endpoint
+    }
+
+    /**
+     * Helper function to send HTTP requests
+     * 
+     * @param {String} method 
+     * @param {String} url 
+     * @param {Object} [body] - request body
+     */
+    async request(method, url, body) {
+        const options = {
+            method: method,
+            headers: {
+                'Accept': 'application/json, image/*;q=0.1', // image is needed for user phote requests
+                'Content-Type': 'application/x-www-form-urlencoded'
+            }
+        }
+        if (this.bearer) {
+            options.headers['Authorization'] = this.bearer
+        }
+        if (body) {
+            // POST
+            options.body = serializeParams(body)
+            options.headers['Content-Length'] = options.body.length
+        }
+
+        let response = await fetch(url, options)
+        const payload = { status: response.status, ok: response.ok, headers: response.headers }
+        try {
+            const json = await response.json()
+            return { ...payload, json }
+        } catch (error) {
+            try {
+                const text = await response.text()
+                return { ...payload, text }
+            } catch (err) {
+                return { ...payload, text: response.statusText }
+            }
+        }
+    }
+}</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Mar 15 2018 22:55:44 GMT+0200 (Mitteleuropäische Sommerzeit) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

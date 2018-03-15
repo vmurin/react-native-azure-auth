@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>webauth/index.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <li class="nav-link nav-home-link"><a href="index.html">Home</a></li><li class="nav-heading">Classes</li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="AzureAuth.html">AzureAuth</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="Client.html">Client</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="module.exports.html">exports</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="module.exports.html#.setLevel">setLevel</a></span></li><li class="nav-heading"><span class="nav-item-type type-class">C</span><span class="nav-item-name"><a href="WebAuth.html">WebAuth</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="WebAuth.html#.authorize">authorize</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="WebAuth.html#.clearSession">clearSession</a></span></li><li class="nav-heading"><a href="global.html">Globals</a></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#request">request</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#serializeParams">serializeParams</a></span></li><li class="nav-item"><span class="nav-item-type type-function">F</span><span class="nav-item-name"><a href="global.html#validate">validate</a></span></li>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">webauth/index.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>import Agent from './agent'
+import url from 'url'
+import AuthError from '../auth/authError'
+import { Platform } from 'react-native'
+import Scope from '../token/scope'
+import BaseTokenItem from '../token/baseTokenItem'
+
+/**
+ * Helper to perform Auth against Azure AD login page
+ *
+ * It will use `/authorize` endpoint of the Authorization Server (AS)
+ * with Code Grant 
+ *
+ * @export
+ * @class WebAuth
+ * @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-protocols-oauth-code
+ */
+export default class WebAuth {
+
+    constructor(auth) {
+        this.client = auth
+        const { clientId } = auth
+        this.clientId = clientId
+        this.agent = new Agent()
+    }
+
+    /**
+   * Starts the AuthN/AuthZ transaction against the AS in the in-app browser.
+   *
+   * In iOS it will use `SFSafariViewController` and in Android Chrome Custom Tabs.
+   *
+   * @param {Object} options parameters to send
+   * @param {String} [options.scope] scopes requested for the issued tokens. 
+   *    OpenID Connect scopes are always added to every request. `openid profile offline_access`
+   *    @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes
+   * @returns {Promise&lt;BaseTokenItem | AccessTokenItem>}
+   *
+   * @memberof WebAuth
+   */
+    async authorize(options = {}) {
+        const scope = new Scope(options.scope)
+
+        const { clientId, client, agent } = this
+        const {nonce, state} = await agent.generateNonceState()
+
+        let requestParams = {
+            ...options,
+            clientId,
+            scope: scope.toString(),
+            responseType: 'code id_token',
+            response_mode: 'fragment', // 'query' is unsafe and not supported, the hash fragment is also default
+            redirectUri: client.redirectUri,
+            state: state,
+            nonce: nonce
+        }
+        const loginUrl = this.client.loginUrl(requestParams)
+
+        let redirectUrl = await agent.openWeb(loginUrl)
+
+        if (!redirectUrl || !redirectUrl.startsWith(client.redirectUri)) {
+            throw new AuthError({
+                json: {
+                    error: 'a0.redirect_uri.not_expected',
+                    error_description: `Expected ${client.redirectUri} but got ${redirectUrl}`
+                },
+                status: 0
+            })
+        }
+
+        // Response is returned in hash, but we want to get parsed object
+        // Query can be parsed, therefore lets replace hash sign with '?' mark
+        redirectUrl = redirectUrl.replace('#','?') // replace only first one
+        const urlHashParsed = url.parse(redirectUrl, true).query
+        const {
+            code,
+            state: resultState,
+            error
+        } = urlHashParsed
+
+        if (error) {
+            throw new AuthError({json: urlHashParsed, status: 0})
+        }
+
+        if (resultState !== state) {
+            throw new AuthError({
+                json: {
+                    error: 'a0.state.invalid',
+                    error_description: 'Invalid state recieved in redirect url'
+                },
+                status: 0
+            })
+        }
+        const tokenResponse = await client.exchange({code, scope: scope.toString()})
+        if (tokenResponse.refreshToken) {
+            this.client.cache.saveRefreshToken(tokenResponse)
+        }
+        if (tokenResponse.accessToken) {
+            let accessToken = await this.client.cache.saveAccessToken(tokenResponse)
+            return accessToken
+        } else {
+            // we have to have at least id_token in respose
+            return new BaseTokenItem(tokenResponse, this.clientId)
+        }
+    }
+
+    
+    /**
+   *  Removes Azure session
+   *  In iOS it will use `SFSafariViewController`
+   *
+   * @param {Object} options parameters to send
+   * @returns {Promise}
+   *
+   * @memberof WebAuth
+   */
+    clearSession(options = {}) {
+        if (Platform.OS !== 'ios') {
+            return Promise.reject(new AuthError({
+                json: {
+                    error: 'a0.platform.not_available',
+                    error_description: `Cannot perform operation in platform ${Platform.OS}`
+                },
+                status: 0
+            }))
+        }
+        const { client, agent } = this
+        const logoutUrl = client.logoutUrl(options)
+        return agent.openWeb(logoutUrl, true)
+    }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Thu Mar 15 2018 22:55:44 GMT+0200 (Mitteleuropäische Sommerzeit) using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
