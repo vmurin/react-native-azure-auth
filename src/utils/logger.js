@@ -13,35 +13,34 @@ export default {
     /**
    * Set log level, this value should be a string
    * 	ERROR, WARN, INFO, DEBUG
-   * @param  {[type]} val [description]
-   * @return {[type]}     [description]
+   * @param  {String} val 
    */
-    setLevel: (val: string) => {
+    setLevel: (val) => {
         console.log('log level set to ', val)
         level = levels[val.toUpperCase()]
     },
 
-    trace: (...args: any) => {
+    trace: (...args) => {
         if(level <= 0)
             console.log('TRACE:', ...args)
     },
 
-    debug: (...args: any) => {
+    debug: (...args) => {
         if(level <= 1)
             console.log('DEBUG:', ...args)
     },
 
-    info: (...args: any) => {
+    info: (...args) => {
         if(level <= 2)
             console.log('INFO:', ...args)
     },
 
-    warn: (...args: any) => {
+    warn: (...args) => {
         if(level <= 3)
             console.warn('WARN:', ...args)
     },
 
-    error: (...args: any) => {
+    error: (...args) => {
         if(level <= 4)
             console.error('ERROR:', ...args)
     },
