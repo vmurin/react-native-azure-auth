@@ -7,6 +7,8 @@ jobs:
   build:
     docker:
       - image: circleci/node:7.10
+        environment:
+            TZ: "/usr/share/zoneinfo/Europe/Berlin"
 
     working_directory: ~/repo
 

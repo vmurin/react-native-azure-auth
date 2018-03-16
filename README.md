@@ -1,5 +1,7 @@
 # react-native-azure-auth
 
+[![CircleCI](https://circleci.com/gh/vmurin/react-native-azure-auth.svg?style=svg)](https://circleci.com/gh/vmurin/react-native-azure-auth)
+
 React Native library implementing Azure AD OAuth2 API
 
 The library uses the latest __V2.0__ version of the [Azure AD endponts](https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-compare) and provides token cache functionality.
