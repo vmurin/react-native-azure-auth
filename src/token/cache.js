@@ -6,6 +6,19 @@ import BaseTokenItem from './baseTokenItem'
 
 let _instance = null
 
+/**
+ * Token persistent cache
+ * 
+ * @namespace TokenCache
+ * 
+ * @param {Object} input - init parameters
+ * @param {String} input.clientId
+ * @param {Boolean} input.persistent - if true - the RN `AsyncStorage` is used for persistent caching,
+ *         otherwise only the class instance. (default: true)
+ * 
+ * @class TokenCache
+ * @memberof TokenCache
+ */
 export default class TokenCache {
     constructor(input = {}) {
         if (!_instance) {

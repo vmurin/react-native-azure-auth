@@ -4,6 +4,18 @@ import BaseTokenItem from './baseTokenItem'
 const DEFAULT_EXPIRE_IN_SECONDS = 3600
 const DEFAULT_EXPIRATION_BUFFER = 300
 
+/**
+ * Class represent acces token cache item
+ * 
+ * @namespace TokenCache.AccessTokenItem
+ * 
+ * @param {Object} tokenResponse 
+ * @param {String} clientId 
+ * 
+ * @class AccessTokenItem
+ * @extends BaseTokenItem
+ * @memberof TokenCache
+ */
 export default class AccessTokenItem extends BaseTokenItem{
     constructor(tokenResponse, clientId) {
         if (!tokenResponse.accessToken) {

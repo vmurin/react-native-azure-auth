@@ -1,13 +1,20 @@
+const BASIC_SCOPE = 'offline_access openid profile'
 /**
+ * Azure AD Auth scope representation class
+ * 
  * 1. Remove MS Graph URLs from scope, as it is default for any scope
  * 2. Remove eventual commas and double spaces
  * 3. Sort
+ * 4. BASIC SCOPE is always a part of auth requests
  * 
- * @param {string} scope 
+ * @namespace TokenCache.Scope
  * 
- * @returns {string}
+ * @param {string | Array<String> | ''} scope - without parameters represents
+ * BASIC_SCOPE = 'offline_access openid profile'
+ * 
+ * @memberof TokenCache
+ * @class Scope
  */
-const BASIC_SCOPE = 'offline_access openid profile'
 
 export default class Scope {
     constructor(scope = '') {

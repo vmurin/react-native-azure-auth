@@ -1,7 +1,6 @@
 import { Base64 } from 'js-base64'
 import log from '../utils/logger'
 
-
 function base64DecodeStringUrlSafe(base64IdToken) {
     return decodeURIComponent(Base64.decode(base64IdToken))
 }
@@ -10,6 +9,12 @@ function isEmptyString(str) {
     return (typeof str === 'undefined' || !str || 0 === str.length)
 }
 
+/**
+ * Decode ID token from
+ * 
+ * @param {string} encoded IdToken string
+ * @returns {Object | null} - in cas of error null is returned
+ */
 export function extractIdToken(encodedIdToken) {
     // id token will be decoded to get the username
     const decodedToken = _decodeJwt(encodedIdToken)

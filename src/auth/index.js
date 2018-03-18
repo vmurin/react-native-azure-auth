@@ -22,6 +22,7 @@ function responseHandler (response, exceptions = {}) {
  *
  * @export Auth
  * @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-protocols
+ * 
  * @class Auth
  */
 export default class Auth {
@@ -167,6 +168,10 @@ export default class Auth {
      * Try to obtain token silently without user interaction
      * 
      * @param {Object} parameters 
+     * @param {String} parameters.userId user login name (e.g. from Id token)
+     * @param {String} parameters.scope scopes requested for the issued tokens.
+     * 
+     * @memberof Auth
      */
     async acquireTokenSilent(parameters = {}) {
         const input = validate({

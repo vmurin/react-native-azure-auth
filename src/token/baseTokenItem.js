@@ -4,12 +4,19 @@ import Scope from './scope'
 
 const TOKEN_CACHE_KEY_DELIMITER = '$'
 
+/**
+ * Class represent basic token cache item
+ * 
+ * @namespace TokenCache.BaseTokenItem
+ * 
+ * @param {Object} tokenResponse 
+ * @param {String} clientId 
+ * 
+ * @class BaseTokenItem
+ * @memberof TokenCache
+ */
+
 export default class BaseTokenItem {
-    /**
-     * 
-     * @param {Object} tokenResponse 
-     * @param {String} clientId 
-     */
     constructor(tokenResponse, clientId) {
         this.clientId = clientId
         this.rawIdToken = tokenResponse.idToken

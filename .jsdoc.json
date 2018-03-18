@@ -8,6 +8,8 @@
     "source": {
         "include": [
             "src/networking",
+            "src/token",
+            "src/auth",
             "src/utils",
             "src/webauth",
             "src/index.js",

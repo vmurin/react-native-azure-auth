@@ -12,8 +12,10 @@ export default {
 
     /**
    * Set log level, this value should be a string
-   * 	ERROR, WARN, INFO, DEBUG
+   * 	ERROR, WARN, INFO, DEBUG, TRACE
    * @param  {String} val 
+   * 
+   * @memberof Globals
    */
     setLevel: (val) => {
         console.log('log level set to ', val)
