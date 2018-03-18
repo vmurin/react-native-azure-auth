@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>networking/index.js - Documentation</title>
+    <title>token/cache.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">networking/index.js</h1>
+    <h1 class="page-title">token/cache.js</h1>
     
 
     
@@ -39,106 +39,141 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import url from 'url'
+            <pre class="prettyprint source linenums"><code>import  { AsyncStorage } from 'react-native'
+import { validate } from '../utils/validate'
+import AccessTokenItem from './accessTokenItem'
+import RefreshTokenItem from './refreshTokenItem'
+import BaseTokenItem from './baseTokenItem'
+
+let _instance = null
 
 /**
- * Helper function to serialize object into urlencoded form data string, properties
- * which value is either `null` or `undefined` will be ignored.
- * @param  {Object} params Object which contains props.
- * @return {string} Result form data string.
+ * Token persistent cache
+ * 
+ * @namespace TokenCache
+ * 
+ * @param {Object} input - init parameters
+ * @param {String} input.clientId
+ * @param {Boolean} input.persistent - if true - the RN `AsyncStorage` is used for persistent caching,
+ *         otherwise only the class instance. (default: true)
+ * 
+ * @class TokenCache
+ * @memberof TokenCache
  */
-function serializeParams(params) {
-    let paramStr = ''
-    for (let prop in params) {
-        if (params[prop] !== null &amp;&amp; params[prop] !== void 0)
-            paramStr += `&amp;${prop}=${encodeURIComponent(params[prop])}`
+export default class TokenCache {
+    constructor(input = {}) {
+        if (!_instance) {
+            _instance = this
+        }
+
+        const params = validate({
+            parameters: {
+                clientId: { required: true },
+                persistent: { required: false },
+            }
+        }, input)
+
+        this.cache = {}
+        this.clientId = params.clientId
+        this.persistent = params.persistent || true // by default enabled
+
+        return _instance
     }
-    return paramStr
-}
 
-/**
- * Helper to perform HTTP requests
- * Blob (binary) content types are not supported
- * 
- * Class variables:
- * - baseUrl | authorityUrl: base URL the request path is added to
- * - token: Auth token if the request needs authorization
- * 
- * @export
- * @class Client
- */
-export default class Client {
-    constructor(options = {}) {
-        const {authorityUrl, baseUrl, token} = options
+    async saveAccessToken(tokenResponse) {
+        let accessToken = new AccessTokenItem(tokenResponse, this.clientId)
+        const key = accessToken.tokenKey()
+        // remove scope intersection  
+        const userTokens = await this.getUserAccessTokenKeys(accessToken.userId)
+        userTokens.forEach((uTokenKey) => {
+            const scopeFormKey = BaseTokenItem.scopeFromKey(uTokenKey)
+            if (scopeFormKey &amp;&amp; !accessToken.scope.equals(scopeFormKey) &amp;&amp;
+                    accessToken.scope.isIntersects(scopeFormKey)) {
+                this.removeToken(uTokenKey)
+            }
+        })
+        this.cache[key] = accessToken.toString()
+        if (this.persistent) {
+            AsyncStorage.setItem(key, accessToken.toString())
+            //.catch(err => { return err /* log error?*/ })
+        }
+        return accessToken
+    }
 
-        if (!(baseUrl || authorityUrl)) { throw new Error('Missing Azure authority base URL') }
-        const parsed = url.parse(baseUrl || authorityUrl)
-        this.baseUrl = parsed.protocol === 'https:' || parsed.protocol === 'http:' ? (baseUrl || authorityUrl) : `https://${(baseUrl || authorityUrl)}`
-        if (token) {
-            this.bearer = `Bearer ${token}`
+    saveRefreshToken(tokenResponse) {
+        let refreshToken = new RefreshTokenItem(tokenResponse, this.clientId)
+        const key = refreshToken.tokenKey()
+        this.cache[key] = refreshToken.toString()
+        if (this.persistent) {
+            AsyncStorage.setItem(key, refreshToken.toString())
+            //.catch(err => { return err /* log error?*/ })
+        }
+        return refreshToken
+    }
+
+    removeToken(tokenKey) {
+        delete this.cache[tokenKey]
+        if (this.persistent) {
+            AsyncStorage.removeItem(tokenKey)
+            //.catch(err => { return err /* log error?*/ })
         }
     }
 
-    post(path, body) {
-        let url = this.url(path)
-        return this.request('POST', url, body)
-    }
-
-    patch(path, body) {
-        return this.request('PATCH', this.url(path), body)
-    }
-
-    get(path, query) {
-        return this.request('GET', this.url(path, query))
-    }
-
-    url(path, query) {
-        let endpoint = url.resolve(this.baseUrl, path)
-        if (query &amp;&amp; query.length !== 0) {
-            const parsed = url.parse(endpoint)
-            parsed.query = query || {}
-            endpoint = url.format(parsed)
+    async getAccessToken(userId, scope) {
+        const key = BaseTokenItem.createAccessTokenKey(this.clientId, userId, scope)
+        if (this.cache[key]) {
+            return this.cache[key]
         }
-        return endpoint
-    }
-
-    /**
-     * Helper function to send HTTP requests
-     * 
-     * @param {String} method 
-     * @param {String} url 
-     * @param {Object} [body] - request body
-     */
-    async request(method, url, body) {
-        const options = {
-            method: method,
-            headers: {
-                'Accept': 'application/json, image/*;q=0.1', // image is needed for user phote requests
-                'Content-Type': 'application/x-www-form-urlencoded'
+        const accessTokenKeyPrefix = BaseTokenItem.createTokenKeyPrefix(this.clientId, userId)
+        for (const key of Object.getOwnPropertyNames(this.cache)) {
+            const scopeFormKey = BaseTokenItem.scopeFromKey(key)
+            if (scopeFormKey &amp;&amp; key.startsWith(accessTokenKeyPrefix) &amp;&amp; scope.isSubsetOf(scopeFormKey)) {
+                return AccessTokenItem.fromJson(this.cache[key])
             }
         }
-        if (this.bearer) {
-            options.headers['Authorization'] = this.bearer
+    
+        if (this.persistent) {
+            let keys = await AsyncStorage.getAllKeys()
+            for (const key of keys) {
+                const scopeFormKey = BaseTokenItem.scopeFromKey(key)
+                if (scopeFormKey &amp;&amp; key.startsWith(accessTokenKeyPrefix) &amp;&amp; scope.isSubsetOf(scopeFormKey)) {
+                    const token = await AsyncStorage.getItem(key)
+                    this.cache[key] = token
+                    return AccessTokenItem.fromJson(token)
+                }
+            }            
         }
-        if (body) {
-            // POST
-            options.body = serializeParams(body)
-            options.headers['Content-Length'] = options.body.length
-        }
+        return null
+    }
 
-        let response = await fetch(url, options)
-        const payload = { status: response.status, ok: response.ok, headers: response.headers }
-        try {
-            const json = await response.json()
-            return { ...payload, json }
-        } catch (error) {
-            try {
-                const text = await response.text()
-                return { ...payload, text }
-            } catch (err) {
-                return { ...payload, text: response.statusText }
+    async getRefreshToken(userId) {
+        const key = BaseTokenItem.createRefreshTokenKey(this.clientId, userId)
+        if (this.cache[key]) {
+            return RefreshTokenItem.fromJson(this.cache[key])
+        }
+        if (this.persistent) {
+            const token = await AsyncStorage.getItem(key)
+            return RefreshTokenItem.fromJson(token)
+        }
+        return null
+    }
+
+    async getUserAccessTokenKeys(userId){
+        const accessTokenKeyPrefix = BaseTokenItem.createTokenKeyPrefix(this.clientId, userId)
+        console.info('getting tokens')
+        let accessTokenKeys = []
+        if (this.persistent) {
+            let keys = await AsyncStorage.getAllKeys()
+            for (const key of keys) {
+                if (key.startsWith(accessTokenKeyPrefix)) accessTokenKeys.push(key)
+            }
+        } else {
+            for (const key of Object.getOwnPropertyNames(this.cache)) {
+                if (key.startsWith(accessTokenKeyPrefix)) accessTokenKeys.push(key)
             }
         }
+
+        return accessTokenKeys
     }
 }</code></pre>
         </article>

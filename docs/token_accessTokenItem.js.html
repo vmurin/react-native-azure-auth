@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>networking/index.js - Documentation</title>
+    <title>token/accessTokenItem.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">networking/index.js</h1>
+    <h1 class="page-title">token/accessTokenItem.js</h1>
     
 
     
@@ -39,106 +39,48 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import url from 'url'
+            <pre class="prettyprint source linenums"><code>import Scope from './scope'
+import BaseTokenItem from './baseTokenItem'
+
+const DEFAULT_EXPIRE_IN_SECONDS = 3600
+const DEFAULT_EXPIRATION_BUFFER = 300
 
 /**
- * Helper function to serialize object into urlencoded form data string, properties
- * which value is either `null` or `undefined` will be ignored.
- * @param  {Object} params Object which contains props.
- * @return {string} Result form data string.
- */
-function serializeParams(params) {
-    let paramStr = ''
-    for (let prop in params) {
-        if (params[prop] !== null &amp;&amp; params[prop] !== void 0)
-            paramStr += `&amp;${prop}=${encodeURIComponent(params[prop])}`
-    }
-    return paramStr
-}
-
-/**
- * Helper to perform HTTP requests
- * Blob (binary) content types are not supported
+ * Class represent acces token cache item
  * 
- * Class variables:
- * - baseUrl | authorityUrl: base URL the request path is added to
- * - token: Auth token if the request needs authorization
+ * @namespace TokenCache.AccessTokenItem
  * 
- * @export
- * @class Client
+ * @param {Object} tokenResponse 
+ * @param {String} clientId 
+ * 
+ * @class AccessTokenItem
+ * @extends BaseTokenItem
+ * @memberof TokenCache
  */
-export default class Client {
-    constructor(options = {}) {
-        const {authorityUrl, baseUrl, token} = options
-
-        if (!(baseUrl || authorityUrl)) { throw new Error('Missing Azure authority base URL') }
-        const parsed = url.parse(baseUrl || authorityUrl)
-        this.baseUrl = parsed.protocol === 'https:' || parsed.protocol === 'http:' ? (baseUrl || authorityUrl) : `https://${(baseUrl || authorityUrl)}`
-        if (token) {
-            this.bearer = `Bearer ${token}`
+export default class AccessTokenItem extends BaseTokenItem{
+    constructor(tokenResponse, clientId) {
+        if (!tokenResponse.accessToken) {
+            throw new Error('Invalid token response. Can not create access token.')
         }
+        super(tokenResponse, clientId)
+
+        this.accessToken = tokenResponse.accessToken
+        this.scope = typeof tokenResponse.scope != 'undefined' ? new Scope(tokenResponse.scope) : Scope.basicScope()
+        this.expireOn = Date.now() + (tokenResponse.expiresIn ? parseInt(tokenResponse.expiresIn) : DEFAULT_EXPIRE_IN_SECONDS)*1000
     }
 
-    post(path, body) {
-        let url = this.url(path)
-        return this.request('POST', url, body)
+    tokenKey() {
+        return BaseTokenItem.createAccessTokenKey(this.clientId, this.userId, this.scope)
     }
 
-    patch(path, body) {
-        return this.request('PATCH', this.url(path), body)
+    isExpired() {
+        const validity = Date.now() + DEFAULT_EXPIRATION_BUFFER
+        return this.expireOn &lt; validity
     }
 
-    get(path, query) {
-        return this.request('GET', this.url(path, query))
-    }
-
-    url(path, query) {
-        let endpoint = url.resolve(this.baseUrl, path)
-        if (query &amp;&amp; query.length !== 0) {
-            const parsed = url.parse(endpoint)
-            parsed.query = query || {}
-            endpoint = url.format(parsed)
-        }
-        return endpoint
-    }
-
-    /**
-     * Helper function to send HTTP requests
-     * 
-     * @param {String} method 
-     * @param {String} url 
-     * @param {Object} [body] - request body
-     */
-    async request(method, url, body) {
-        const options = {
-            method: method,
-            headers: {
-                'Accept': 'application/json, image/*;q=0.1', // image is needed for user phote requests
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        }
-        if (this.bearer) {
-            options.headers['Authorization'] = this.bearer
-        }
-        if (body) {
-            // POST
-            options.body = serializeParams(body)
-            options.headers['Content-Length'] = options.body.length
-        }
-
-        let response = await fetch(url, options)
-        const payload = { status: response.status, ok: response.ok, headers: response.headers }
-        try {
-            const json = await response.json()
-            return { ...payload, json }
-        } catch (error) {
-            try {
-                const text = await response.text()
-                return { ...payload, text }
-            } catch (err) {
-                return { ...payload, text: response.statusText }
-            }
-        }
+    static fromJson(objStr) {
+        let obj = Object.create(AccessTokenItem.prototype)
+        return Object.assign(obj, JSON.parse(objStr))
     }
 }</code></pre>
         </article>

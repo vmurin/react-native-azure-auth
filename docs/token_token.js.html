@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>networking/index.js - Documentation</title>
+    <title>token/token.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,7 +29,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">networking/index.js</h1>
+    <h1 class="page-title">token/token.js</h1>
     
 
     
@@ -39,107 +39,60 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>import url from 'url'
+            <pre class="prettyprint source linenums"><code>import { Base64 } from 'js-base64'
+import log from '../utils/logger'
 
-/**
- * Helper function to serialize object into urlencoded form data string, properties
- * which value is either `null` or `undefined` will be ignored.
- * @param  {Object} params Object which contains props.
- * @return {string} Result form data string.
- */
-function serializeParams(params) {
-    let paramStr = ''
-    for (let prop in params) {
-        if (params[prop] !== null &amp;&amp; params[prop] !== void 0)
-            paramStr += `&amp;${prop}=${encodeURIComponent(params[prop])}`
-    }
-    return paramStr
+function base64DecodeStringUrlSafe(base64IdToken) {
+    return decodeURIComponent(Base64.decode(base64IdToken))
+}
+
+function isEmptyString(str) {
+    return (typeof str === 'undefined' || !str || 0 === str.length)
 }
 
 /**
- * Helper to perform HTTP requests
- * Blob (binary) content types are not supported
+ * Decode ID token from
  * 
- * Class variables:
- * - baseUrl | authorityUrl: base URL the request path is added to
- * - token: Auth token if the request needs authorization
- * 
- * @export
- * @class Client
+ * @param {string} encoded IdToken string
+ * @returns {Object | null} - in cas of error null is returned
  */
-export default class Client {
-    constructor(options = {}) {
-        const {authorityUrl, baseUrl, token} = options
-
-        if (!(baseUrl || authorityUrl)) { throw new Error('Missing Azure authority base URL') }
-        const parsed = url.parse(baseUrl || authorityUrl)
-        this.baseUrl = parsed.protocol === 'https:' || parsed.protocol === 'http:' ? (baseUrl || authorityUrl) : `https://${(baseUrl || authorityUrl)}`
-        if (token) {
-            this.bearer = `Bearer ${token}`
+export function extractIdToken(encodedIdToken) {
+    // id token will be decoded to get the username
+    const decodedToken = _decodeJwt(encodedIdToken)
+    if (!decodedToken) {
+        return null
+    }
+    try {
+        const base64IdToken = decodedToken.JWSPayload
+        const base64Decoded = base64DecodeStringUrlSafe(base64IdToken)
+        if (!base64Decoded) {
+            log.info('The returned id_token could not be base64 url safe decoded.')
+            return null
         }
+        return JSON.parse(base64Decoded)
+    } catch (err) {
+        log.error('The returned id_token could not be decoded', err)
     }
 
-    post(path, body) {
-        let url = this.url(path)
-        return this.request('POST', url, body)
-    }
+    return null
+}
 
-    patch(path, body) {
-        return this.request('PATCH', this.url(path), body)
+function _decodeJwt(jwtToken) {
+    if (isEmptyString(jwtToken)) {
+        return null
     }
-
-    get(path, query) {
-        return this.request('GET', this.url(path, query))
+    const idTokenPartsRegex = /^([^.\s]*)\.([^.\s]+)\.([^.\s]*)$/
+    const matches = idTokenPartsRegex.exec(jwtToken)
+    if (!matches || matches.length &lt; 4) {
+        log.warn('The returned id_token is not parseable.')
+        return null
     }
-
-    url(path, query) {
-        let endpoint = url.resolve(this.baseUrl, path)
-        if (query &amp;&amp; query.length !== 0) {
-            const parsed = url.parse(endpoint)
-            parsed.query = query || {}
-            endpoint = url.format(parsed)
-        }
-        return endpoint
+    const crackedToken = {
+        header: matches[1],
+        JWSPayload: matches[2],
+        JWSSig: matches[3]
     }
-
-    /**
-     * Helper function to send HTTP requests
-     * 
-     * @param {String} method 
-     * @param {String} url 
-     * @param {Object} [body] - request body
-     */
-    async request(method, url, body) {
-        const options = {
-            method: method,
-            headers: {
-                'Accept': 'application/json, image/*;q=0.1', // image is needed for user phote requests
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        }
-        if (this.bearer) {
-            options.headers['Authorization'] = this.bearer
-        }
-        if (body) {
-            // POST
-            options.body = serializeParams(body)
-            options.headers['Content-Length'] = options.body.length
-        }
-
-        let response = await fetch(url, options)
-        const payload = { status: response.status, ok: response.ok, headers: response.headers }
-        try {
-            const json = await response.json()
-            return { ...payload, json }
-        } catch (error) {
-            try {
-                const text = await response.text()
-                return { ...payload, text }
-            } catch (err) {
-                return { ...payload, text: response.statusText }
-            }
-        }
-    }
+    return crackedToken
 }</code></pre>
         </article>
     </section>

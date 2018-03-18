@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>networking/index.js - Documentation</title>
+    <title>BaseError - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -29,120 +29,218 @@
 
 <div id="main">
     
-    <h1 class="page-title">networking/index.js</h1>
+    <h1 class="page-title">BaseError</h1>
     
 
     
 
 
 
+
+<section>
+
+<header>
     
-    <section>
-        <article>
-            <pre class="prettyprint source linenums"><code>import url from 'url'
+        <h2>
+        BaseError
+        </h2>
+        
+    
+</header>
 
-/**
- * Helper function to serialize object into urlencoded form data string, properties
- * which value is either `null` or `undefined` will be ignored.
- * @param  {Object} params Object which contains props.
- * @return {string} Result form data string.
- */
-function serializeParams(params) {
-    let paramStr = ''
-    for (let prop in params) {
-        if (params[prop] !== null &amp;&amp; params[prop] !== void 0)
-            paramStr += `&amp;${prop}=${encodeURIComponent(params[prop])}`
-    }
-    return paramStr
-}
+<article>
+    <div class="container-overview">
+    
+        
+<div class="section-method">
 
-/**
- * Helper to perform HTTP requests
- * Blob (binary) content types are not supported
- * 
- * Class variables:
- * - baseUrl | authorityUrl: base URL the request path is added to
- * - token: Auth token if the request needs authorization
- * 
- * @export
- * @class Client
- */
-export default class Client {
-    constructor(options = {}) {
-        const {authorityUrl, baseUrl, token} = options
+    
 
-        if (!(baseUrl || authorityUrl)) { throw new Error('Missing Azure authority base URL') }
-        const parsed = url.parse(baseUrl || authorityUrl)
-        this.baseUrl = parsed.protocol === 'https:' || parsed.protocol === 'http:' ? (baseUrl || authorityUrl) : `https://${(baseUrl || authorityUrl)}`
-        if (token) {
-            this.bearer = `Bearer ${token}`
-        }
-    }
+    <h4 class="name" id="BaseError"><span class="type-signature"></span>new BaseError<span class="signature">(name, message)</span><span class="type-signature"></span></h4>
 
-    post(path, body) {
-        let url = this.url(path)
-        return this.request('POST', url, body)
-    }
+    
 
-    patch(path, body) {
-        return this.request('PATCH', this.url(path), body)
-    }
 
-    get(path, query) {
-        return this.request('GET', this.url(path, query))
-    }
 
-    url(path, query) {
-        let endpoint = url.resolve(this.baseUrl, path)
-        if (query &amp;&amp; query.length !== 0) {
-            const parsed = url.parse(endpoint)
-            parsed.query = query || {}
-            endpoint = url.format(parsed)
-        }
-        return endpoint
-    }
+<div class="description">
+    <p>Base error class needs <code>babel-plugin-transform-builtin-extend</code> for correct function</p>
+</div>
 
-    /**
-     * Helper function to send HTTP requests
-     * 
-     * @param {String} method 
-     * @param {String} url 
-     * @param {Object} [body] - request body
-     */
-    async request(method, url, body) {
-        const options = {
-            method: method,
-            headers: {
-                'Accept': 'application/json, image/*;q=0.1', // image is needed for user phote requests
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        }
-        if (this.bearer) {
-            options.headers['Authorization'] = this.bearer
-        }
-        if (body) {
-            // POST
-            options.body = serializeParams(body)
-            options.headers['Content-Length'] = options.body.length
-        }
 
-        let response = await fetch(url, options)
-        const payload = { status: response.status, ok: response.ok, headers: response.headers }
-        try {
-            const json = await response.json()
-            return { ...payload, json }
-        } catch (error) {
-            try {
-                const text = await response.text()
-                return { ...payload, text }
-            } catch (err) {
-                return { ...payload, text: response.statusText }
-            }
-        }
-    }
-}</code></pre>
-        </article>
-    </section>
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="utils_baseError.js.html">utils/baseError.js</a>, <a href="utils_baseError.js.html#line1">line 1</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+    <dt class="tag-see">See:</dt>
+    <dd class="tag-see">
+        <ul>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error">https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error</a></li>
+        </ul>
+    </dd>
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>String</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                <p>error name</p>
+                
+            </td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>message</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type"><code>String</code></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">
+                
+                
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</div>
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+
+    
+
+    
+</article>
+
+</section>
 
 
 
