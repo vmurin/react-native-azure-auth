@@ -30,7 +30,6 @@
     "@types/jest": "^19.2.4",
     "babel-eslint": "^8.2.2",
     "babel-jest": "^20.0.3",
-    "babel-plugin-transform-builtin-extend": "^1.1.2",
     "babel-preset-env": "^1.6.1",
     "babel-preset-react-native": "^1.9.2",
     "codecov": "^2.2.0",
@@ -46,6 +45,7 @@
     "prop-types": "^15.6.0"
   },
   "dependencies": {
+    "babel-plugin-transform-builtin-extend": "^1.1.2",
     "js-base64": "github:vmurin/js-base64",
     "url": "^0.11.0"
   }
