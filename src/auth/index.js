@@ -189,7 +189,7 @@ export default class Auth {
             }
             let refreshToken = await this.cache.getRefreshToken(input.userId)
             if (refreshToken) {
-                const tokenResponse = await this.refreshTokens(refreshToken, scope)
+                const tokenResponse = await this.refreshTokens({refreshToken.refreshToken, scope})
                 if (tokenResponse && tokenResponse.refreshToken) {
                     this.cache.saveRefreshToken(tokenResponse)
                 }
