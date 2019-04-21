@@ -81,7 +81,7 @@ export default class TokenCache {
     async getAccessToken(userId, scope) {
         const key = BaseTokenItem.createAccessTokenKey(this.clientId, userId, scope)
         if (this.cache[key]) {
-            return this.cache[key]
+            return AccessTokenItem.fromJson(this.cache[key])
         }
         const accessTokenKeyPrefix = BaseTokenItem.createTokenKeyPrefix(this.clientId, userId)
         for (const key of Object.getOwnPropertyNames(this.cache)) {
