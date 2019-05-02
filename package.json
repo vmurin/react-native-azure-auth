@@ -45,8 +45,13 @@
     "prop-types": "^15.6.0"
   },
   "dependencies": {
+    "@react-native-community/async-storage": "^1.3.4",
     "babel-plugin-transform-builtin-extend": "^1.1.2",
     "js-base64": "github:vmurin/js-base64",
     "url": "^0.11.0"
+  },
+  "peerDependencies": {
+    "react": "^16.0.0",
+    "react-native": ">=0.57.0"
   }
 }
