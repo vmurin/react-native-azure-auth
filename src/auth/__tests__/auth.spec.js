@@ -1,6 +1,7 @@
 import Auth from '../'
 import fetchMock from 'fetch-mock'
 jest.mock('react-native')
+jest.mock('@react-native-community/async-storage')
 import { NativeModules } from 'react-native'
 const AzureAuth = NativeModules.AzureAuth
 import Scope from '../../token/scope'

@@ -1,4 +1,5 @@
 jest.mock('react-native')
+jest.mock('@react-native-community/async-storage')
 import TokenCache from '../cache'
 
 const clientId = '123'
