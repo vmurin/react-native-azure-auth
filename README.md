@@ -28,6 +28,12 @@ then you need to link the native module in `react-native-azure-auth`
 react-native link react-native-azure-auth
 ```
 
+From version 1.1 the library uses extracted version of AsyncStorage, so you should link it too:
+
+```bash
+react-native link @react-native-community/async-storage
+```
+
 ### App Registration
 
 First, you will need to register your application with Microsoft Application Registration Portal. This will give you an Application ID for your application, as well as enable it to receive tokens.
