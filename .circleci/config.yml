@@ -6,7 +6,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: circleci/node:7.10
+      - image: circleci/node:8.11
         environment:
             TZ: "/usr/share/zoneinfo/Europe/Berlin"
 
