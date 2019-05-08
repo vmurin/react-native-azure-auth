@@ -193,6 +193,10 @@ const azureAuth = new AzureAuth({
     }
 ```
 
+### Usage example
+
+You can consult a tiny sample project [react-native-azure-auth-sample](https://github.com/vmurin/react-native-azure-auth-sample) for usage example
+
 ## Issue Reporting
 
 If you have found a bug or if you have a feature request, please report them at this repository issues section. Please do not report security vulnerabilities on the public GitHub issue tracker.
