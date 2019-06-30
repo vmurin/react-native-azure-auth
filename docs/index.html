@@ -48,29 +48,68 @@
 
 
     <section class="readme">
-        <article><h1>react-native-azure-auth</h1><p><a href="https://circleci.com/gh/vmurin/react-native-azure-auth"><img src="https://circleci.com/gh/vmurin/react-native-azure-auth.svg?style=svg" alt="CircleCI"></a></p>
+        <article><h1>react-native-azure-auth</h1>
+<p><a href="https://circleci.com/gh/vmurin/react-native-azure-auth"><img src="https://circleci.com/gh/vmurin/react-native-azure-auth.svg?style=svg" alt="CircleCI"></a></p>
 <p>React Native library implementing Azure AD OAuth2 API</p>
 <p>The library uses the latest <strong>V2.0</strong> version of the <a href="https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-compare">Azure AD endponts</a> and provides token cache functionality.
 <code>react-native-azure-auth</code> implements authentication flow using <code>fetch</code> API and native components.
 The OpenID connect and <code>autorization_code</code> grant are implemented.</p>
-<h2>Installation</h2><p>Install <code>react-native-azure-auth</code> using <a href="https://www.npmjs.com">npm</a></p>
-<pre class="prettyprint source lang-bash"><code>npm install react-native-azure-auth --save</code></pre><p>Or via <a href="https://yarnpkg.com/">yarn</a> (recommended)</p>
-<pre class="prettyprint source lang-bash"><code>yarn add react-native-azure-auth</code></pre><p>then you need to link the native module in <code>react-native-azure-auth</code></p>
-<pre class="prettyprint source lang-bash"><code>react-native link react-native-azure-auth</code></pre><p>From version 1.1 the library uses extracted version of AsyncStorage, so you should link it too:</p>
-<pre class="prettyprint source lang-bash"><code>react-native link @react-native-community/async-storage</code></pre><h3>App Registration</h3><p>First, you will need to register your application with Microsoft Application Registration Portal. This will give you an Application ID for your application, as well as enable it to receive tokens.</p>
+<h2>Installation</h2>
+<p>Install <code>react-native-azure-auth</code> using <a href="https://www.npmjs.com">npm</a></p>
+<pre class="prettyprint source lang-bash"><code>npm install react-native-azure-auth --save
+</code></pre>
+<p>Or via <a href="https://yarnpkg.com/">yarn</a> (recommended)</p>
+<pre class="prettyprint source lang-bash"><code>yarn add react-native-azure-auth
+</code></pre>
+<p>then you need to link the native module in <code>react-native-azure-auth</code></p>
+<pre class="prettyprint source lang-bash"><code>react-native link react-native-azure-auth
+</code></pre>
+<p>From version 1.1 the library uses extracted version of AsyncStorage, so you should link it too:</p>
+<pre class="prettyprint source lang-bash"><code>react-native link @react-native-community/async-storage
+</code></pre>
+<h3>App Registration</h3>
+<p>First, you will need to register your application with Microsoft Azure Portal. This will give you an Application ID for your application, as well as enable it to receive tokens.</p>
 <ol>
-<li>Sign in to the <a href="https://apps.dev.microsoft.com/">Microsoft Application Registration Portal</a>.</li>
-<li>Click <strong>Add an App</strong> in <em>Converged Application</em> group. (You will also have the group <em>Azure AD only applications</em> if you are logged in with a work or school account)</li>
-<li>Enter a friendly name for the application, leave the checkbox &quot;Let us help you get st arted&quot; NOT selected and click on <strong>&quot;Create&quot;</strong> below to create the app.</li>
-<li>Find the <em>Application ID</em> value in <strong>Properties</strong> section, copy and save the value in a safe location.</li>
-<li>In -Platforms- section click <strong>Add Platform</strong></li>
-<li>Choose <em>&quot;Native Application&quot;</em></li>
-<li>Now add to <strong>Userdefined Callback-URLs</strong> the URL for needed platforms. See the URL format in section below.</li>
-<li>The section Microsoft Graph Permissions is meant for admin consent only. You don't need to fill it out by app re gistration.</li>
-<li>Click Save button below to complete the app registration.</li>
+<li>Sign in to the <a href="https://portal.azure.com">Microsoft Azure Portal</a>.</li>
+<li>First you need to find the <strong>App Registration Service</strong>. You could just type in the service name in the search bar on the middle top of the window and select it or do like following:
+<ol>
+<li>Click on <strong>All services</strong> in the left panel</li>
+<li>Then select from the shown in bold categories the <strong>Identity</strong></li>
+<li>Click on the star sign near the <em>App registration</em> service name to add it to favorites</li>
+<li>Now you can easily access the service using the left portal panel</li>
 </ol>
-<h4>Callback URL(s)</h4><p>Callback URLs are the URLs that Azure AD invokes after the authentication process. Azure routes your application back to this URL and appends additional parameters to it, including a token. Since callback URLs can be manipulated, you will need to add your application's URL to your apps's <strong>Userdefined Callback-URLs</strong>. This will enable Azure to recognize these URLs as valid. If omitted, authentication will not be successful.</p>
-<h5>iOS</h5><pre class="prettyprint source lang-text"><code>{YOUR_BUNDLE_IDENTIFIER}://${YOUR_BUNDLE_IDENTIFIER}/ios/callback</code></pre><h5>Android</h5><pre class="prettyprint source lang-text"><code>{YOUR_APP_PACKAGE_NAME}://{YOUR_APP_PACKAGE_NAME}/android/callback</code></pre><h3>App Configuration</h3><h4>Android config</h4><p>In the file <code>android/app/src/main/AndroidManifest.xml</code> you must make sure the <strong>MainActivity</strong> of the app has a <strong>launchMode</strong> value of <code>singleTask</code> and that it has the following intent filter:</p>
+</li>
+<li>After selecting <em>App registration</em> service click <strong>New registration</strong></li>
+<li>Enter a friendly name for the application</li>
+<li>Select account type that should be supported by your app. The default choice <em>&quot;Accounts in any organizational directory and personal Microsoft accounts&quot;</em> is the widest one.</li>
+<li>Now you need to add <strong>Redirect URI</strong>
+<ol>
+<li>Select <em>Public client (mobile &amp; desktop)</em> from dropdown</li>
+<li>Type in the URI. See the URI format in the section below.</li>
+</ol>
+</li>
+<li>Click <strong>Register</strong> to create the app registration record.</li>
+<li>Find the <em>Application (client) ID</em> value in <strong>Overview</strong> section, copy and save the value in a safe location.</li>
+<li>You don't need to set <em>API Permissions</em>. It is meant for admin consent only.</li>
+<li>Now select <strong>Authentication</strong> from the left menu</li>
+<li>Select checkboxes <strong>Access tockens</strong> and <strong>ID tokens</strong> in the <em>Implicit grant</em> section.</li>
+<li>Click <strong>Save</strong> button above to save changes.</li>
+</ol>
+<h4>Callback URL(s)</h4>
+<p>Callback URLs are the URIs that Azure AD invokes after the authentication process. Azure routes your application back to this URI and appends additional parameters to it, including a token. Since callback URLs can be manipulated, you will need to add your application's URL to your apps's registered <strong>Redirect-URIs</strong>. This will enable Azure to recognize these URLs as valid. If omitted, authentication will not be successful.</p>
+<h5>iOS - default redirect URI structure</h5>
+<pre class="prettyprint source lang-text"><code>{YOUR_BUNDLE_IDENTIFIER}://${YOUR_BUNDLE_IDENTIFIER}/ios/callback
+</code></pre>
+<h5>Android - default redirect URI structure</h5>
+<pre class="prettyprint source lang-text"><code>{YOUR_APP_PACKAGE_NAME}://{YOUR_APP_PACKAGE_NAME}/android/callback
+</code></pre>
+<p><strong>Note:</strong> Be aware of allowed characters for the scheme part of URI. According to RFC 2396 (Section 3.1):</p>
+<pre class="prettyprint source lang-text"><code>scheme = alpha *( alpha | digit | &quot;+&quot; | &quot;-&quot; | &quot;.&quot; )
+</code></pre>
+<p>As you can see, allowed in identifier and package name underscore (<code>_</code>) character is not allowed in the URI scheme!</p>
+<h3>App Configuration</h3>
+<h4>Android config</h4>
+<p>In the file <code>android/app/src/main/AndroidManifest.xml</code> you must make sure the <strong>MainActivity</strong> of the app has a <strong>launchMode</strong> value of <code>singleTask</code> and that it has the following intent filter:</p>
 <pre class="prettyprint source lang-xml"><code>&lt;intent-filter>
     &lt;action android:name=&quot;android.intent.action.VIEW&quot; />
     &lt;category android:name=&quot;android.intent.category.DEFAULT&quot; />
@@ -78,7 +117,9 @@ The OpenID connect and <code>autorization_code</code> grant are implemented.</p>
     &lt;data
         android:pathPrefix=&quot;/android/${applicationId}/callback&quot;
         android:scheme=&quot;${applicationId}&quot; />
-&lt;/intent-filter></code></pre><p>The <code>applicationId</code> here should be the same as your app package name, and not the ID from MS App Portal.</p>
+&lt;/intent-filter>
+</code></pre>
+<p>The <code>applicationId</code> here should be the same as your app package name, and not the ID from MS App Portal.</p>
 <p>You would have the following <strong>MainActivity</strong>  configuration:</p>
 <pre class="prettyprint source lang-xml"><code>&lt;activity
 android:name=&quot;.MainActivity&quot;
@@ -98,10 +139,13 @@ android:windowSoftInputMode=&quot;adjustResize&quot;>
         android:pathPrefix=&quot;/android/${applicationId}/callback&quot;
         android:scheme=&quot;${applicationId}&quot; />
 &lt;/intent-filter>
-&lt;/activity></code></pre><blockquote>
+&lt;/activity>
+</code></pre>
+<blockquote>
 <p>For more info please read <a href="https://facebook.github.io/react-native/docs/linking.html">react native docs</a></p>
 </blockquote>
-<h4>iOS config</h4><p>Inside the <code>ios</code> folder find the file <code>AppDelegate.[swift|m]</code> add the following to it</p>
+<h4>iOS config</h4>
+<p>Inside the <code>ios</code> folder find the file <code>AppDelegate.[swift|m]</code> add the following to it</p>
 <pre class="prettyprint source lang-objc"><code>#import &lt;React/RCTLinkingManager.h>
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
@@ -109,9 +153,13 @@ android:windowSoftInputMode=&quot;adjustResize&quot;>
 {
   return [RCTLinkingManager application:application openURL:url
                       sourceApplication:sourceApplication annotation:annotation];
-}</code></pre><p>Inside the <code>ios</code> folder open the <code>Info.plist</code> and locate the value for <code>CFBundleIdentifier</code>, e.g.</p>
+}
+</code></pre>
+<p>Inside the <code>ios</code> folder open the <code>Info.plist</code> and locate the value for <code>CFBundleIdentifier</code>, e.g.</p>
 <pre class="prettyprint source lang-xml"><code>&lt;key>CFBundleIdentifier&lt;/key>
-&lt;string>org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)&lt;/string></code></pre><p>and then register a URL type entry using the value of <code>CFBundleIdentifier</code> as the value of <code>CFBundleURLSchemes</code></p>
+&lt;string>org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)&lt;/string>
+</code></pre>
+<p>and then register a URL type entry using the value of <code>CFBundleIdentifier</code> as the value of <code>CFBundleURLSchemes</code></p>
 <pre class="prettyprint source lang-xml"><code>&lt;key>CFBundleURLTypes&lt;/key>
 &lt;array>
     &lt;dict>
@@ -124,22 +172,31 @@ android:windowSoftInputMode=&quot;adjustResize&quot;>
             &lt;string>org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)&lt;/string>
         &lt;/array>
     &lt;/dict>
-&lt;/array></code></pre><blockquote>
+&lt;/array>
+</code></pre>
+<blockquote>
 <p>The value <code>org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)</code> is the default for apps created with React Native CLI, you may have a different value.</p>
 </blockquote>
 <p>For more info please read <a href="https://facebook.github.io/react-native/docs/linking.html">react native docs</a></p>
-<h2>Usage</h2><pre class="prettyprint source lang-js"><code>import AzureAuth from 'react-native-azure-auth';
+<h2>Usage</h2>
+<pre class="prettyprint source lang-js"><code>import AzureAuth from 'react-native-azure-auth';
 
 const azureAuth = new AzureAuth({
     clientId: 'YOUR_CLIENT_ID'
-});</code></pre><h3>Authorization with user interaction</h3><pre class="prettyprint source lang-js"><code>    try {
+});
+</code></pre>
+<h3>Authorization with user interaction</h3>
+<pre class="prettyprint source lang-js"><code>    try {
       let tokens = await azureAuth.webAuth.authorize({scope: 'openid profile User.Read Mail.Read' })
       this.setState({ accessToken: tokens.accessToken });
       let info = await azureAuth.auth.msGraphRequest({token: tokens.accessToken, path: '/me'})
       this.setState({ user: info.displayName, userId: tokens.userId })
     } catch (error) {
       console.log(error)
-    }</code></pre><h3>Silent authorization</h3><pre class="prettyprint source lang-js"><code>    try {
+    }
+</code></pre>
+<h3>Silent authorization</h3>
+<pre class="prettyprint source lang-js"><code>    try {
         // Try to get cached token or refresh an expired ones
         let tokens = await azureAuth.auth.acquireTokenSilent({scope: 'Mail.Read', userId: this.state.userId})
         if (!tokens) {
@@ -150,11 +207,18 @@ const azureAuth = new AzureAuth({
         let mails = await azureAuth.auth.msGraphRequest({token: tokens.accessToken, path: '/me/mailFolders/Inbox/messages'})
     } catch (error) {
       console.log(error)
-    }</code></pre><h3>Usage example</h3><p>You can consult a tiny sample project <a href="https://github.com/vmurin/react-native-azure-auth-sample">react-native-azure-auth-sample</a> for usage example</p>
-<h2>Issue Reporting</h2><p>If you have found a bug or if you have a feature request, please report them at this repository issues section. Please do not report security vulnerabilities on the public GitHub issue tracker.</p>
-<h2>Author</h2><p><a href="https://github.com/vmurin">Vladimir Murin</a></p>
-<h2>Credits</h2><p>This project was originally inspired by <a href="https://github.com/auth0/react-native-auth0">https://github.com/auth0/react-native-auth0</a></p>
-<h2>License</h2><p>This project is licensed under the MIT license. See the <a href="LICENSE">LICENSE</a> file for more info.</p></article>
+    }
+</code></pre>
+<h3>Usage example</h3>
+<p>You can consult a tiny sample project <a href="https://github.com/vmurin/react-native-azure-auth-sample">react-native-azure-auth-sample</a> for usage example</p>
+<h2>Issue Reporting</h2>
+<p>If you have found a bug or if you have a feature request, please report them at this repository issues section. Please do not report security vulnerabilities on the public GitHub issue tracker.</p>
+<h2>Author</h2>
+<p><a href="https://github.com/vmurin">Vladimir Murin</a></p>
+<h2>Credits</h2>
+<p>This project was originally inspired by <a href="https://github.com/auth0/react-native-auth0">https://github.com/auth0/react-native-auth0</a></p>
+<h2>License</h2>
+<p>This project is licensed under the MIT license. See the <a href="LICENSE">LICENSE</a> file for more info.</p></article>
     </section>
 
 
@@ -167,7 +231,7 @@ const azureAuth = new AzureAuth({
 <br class="clear">
 
 <footer>
-    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Sat Jun 01 2019 12:52:55 GMT+0200 (Mitteleuropäische Sommerzeit) using the Minami theme.
+    Generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a> on Sun Jun 30 2019 17:07:16 GMT+0200 (GMT+02:00) using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
