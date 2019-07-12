@@ -148,6 +148,10 @@ Inside the `ios` folder open the `Info.plist` and locate the value for `CFBundle
 <string>org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)</string>
 ```
 
+> The value `org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)` is the default for apps created with React Native CLI, you may have a different value. 
+>
+> It is advisable to replace it with your own meaningfull ID in reverse DNS format. e.g. _com.my-domain.native-app_
+
 and then register a URL type entry using the value of `CFBundleIdentifier` as the value of `CFBundleURLSchemes`
 
 ```xml
@@ -157,7 +161,7 @@ and then register a URL type entry using the value of `CFBundleIdentifier` as th
         <key>CFBundleTypeRole</key>
         <string>None</string>
         <key>CFBundleURLName</key>
-        <string>auth0</string>
+        <string>AzureAuth</string>
         <key>CFBundleURLSchemes</key>
         <array>
             <string>org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)</string>
@@ -166,7 +170,8 @@ and then register a URL type entry using the value of `CFBundleIdentifier` as th
 </array>
 ```
 
-> The value `org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)` is the default for apps created with React Native CLI, you may have a different value.
+>**Attention:** The `<string>` value for `CFBundleURLSchemes` key should be the literal value of the Bundle Identifier with no $ variables, for example: _com.my-domain.native-app_
+
 
 For more info please read [react native docs](https://facebook.github.io/react-native/docs/linking.html)
 
