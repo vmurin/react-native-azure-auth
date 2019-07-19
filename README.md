@@ -93,7 +93,7 @@ In the file `android/app/src/main/AndroidManifest.xml` you must make sure the **
     <category android:name="android.intent.category.DEFAULT" />
     <category android:name="android.intent.category.BROWSABLE" />
     <data
-        android:pathPrefix="/android/${applicationId}/callback"
+        android:pathPrefix="/${applicationId}/android/callback"
         android:scheme="${applicationId}" />
 </intent-filter>
 ```
@@ -118,7 +118,7 @@ android:windowSoftInputMode="adjustResize">
     <category android:name="android.intent.category.DEFAULT" />
     <category android:name="android.intent.category.BROWSABLE" />
     <data
-        android:pathPrefix="/android/${applicationId}/callback"
+        android:pathPrefix="/${applicationId}/android/callback"
         android:scheme="${applicationId}" />
 </intent-filter>
 </activity>
