@@ -106,7 +106,7 @@ export default class WebAuth {
     
     /**
    *  Removes Azure session
-   *  In iOS it will use `SFSafariViewController`
+   *  In iOS it will use `SFSafariViewController` and in Android Chrome Custom Tabs.
    *
    * @param {Object} options parameters to send
    * @returns {Promise}
@@ -114,15 +114,6 @@ export default class WebAuth {
    * @memberof WebAuth
    */
     clearSession(options = {}) {
-        if (Platform.OS !== 'ios') {
-            return Promise.reject(new AuthError({
-                json: {
-                    error: 'a0.platform.not_available',
-                    error_description: `Cannot perform operation in platform ${Platform.OS}`
-                },
-                status: 0
-            }))
-        }
         const { client, agent } = this
         const logoutUrl = client.logoutUrl(options)
         return agent.openWeb(logoutUrl, true)
