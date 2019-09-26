@@ -1,7 +1,6 @@
 import Agent from './agent'
 import url from 'url'
 import AuthError from '../auth/authError'
-import { Platform } from 'react-native'
 import Scope from '../token/scope'
 import BaseTokenItem from '../token/baseTokenItem'
 
@@ -27,7 +26,7 @@ export default class WebAuth {
     /**
    * Starts the AuthN/AuthZ transaction against the AS in the in-app browser.
    *
-   * In iOS it will use `SFSafariViewController` and in Android Chrome Custom Tabs.
+   * In iOS it will use `SFSafariViewController` and in Android `Chrome Custom Tabs`.
    *
    * @param {Object} options parameters to send
    * @param {String} [options.scope] scopes requested for the issued tokens. 

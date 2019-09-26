@@ -77,21 +77,17 @@ export default class Auth {
 
     /**
    * Builds the full logout endpoint url in the Authorization Server (AS) with given parameters.
-   *
-   * @param {Object} parameters parameters to send to `/logout`
-   * @param {String} [parameters.redirectUri] url where the user is redirected to after logout. It must be declared in you App Registration
-   * @returns {String} logout url with specified parameters
+   * https://login.microsoftonline.com/common/oauth2/logout?post_logout_redirect_uri=[URI]&redirect_uri=[URI]
+   * 
+   * @returns {String} logout url with default parameter
    *
    * @memberof Auth
    */
-    logoutUrl(parameters = {}) {
-        const query = validate({
-            parameters: {
-                redirectUri: { required: false, toName: 'post_logout_redirect_uri' }
-            }
-        }, parameters)
-        // https://login.microsoftonline.com/common/oauth2/logout?post_logout_redirect_uri=[URI]&redirect_uri=[URI]
-        return this.client.url('logout', {redirect_uri: query.post_logout_redirect_uri, ...query})
+    logoutUrl() {
+        return this.client.url('logout', {
+            post_logout_redirect_uri: this.redirectUri,
+            redirect_uri: this.redirectUri
+        })
     }
 
     /**
