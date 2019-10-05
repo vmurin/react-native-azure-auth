@@ -1,12 +1,12 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Agent generateNonceState should call native integration 1`] = `
+exports[`Agent generateRequestParams should call native integration 1`] = `
 Object {
   "state": "state",
 }
 `;
 
-exports[`Agent generateNonceState should fail if native module is not linked 1`] = `[Error: Missing NativeModule. Please make sure you run \`react-native link react-native-azure-auth\`]`;
+exports[`Agent generateRequestParams should fail if native module is not linked 1`] = `[Error: Missing NativeModule. Please make sure you run \`react-native link react-native-azure-auth\`]`;
 
 exports[`Agent show complete web flow should resolve promise with url result 1`] = `"https://developer.microsoft.com/en-us/"`;
 

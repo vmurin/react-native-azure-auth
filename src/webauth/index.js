@@ -40,7 +40,7 @@ export default class WebAuth {
         const scope = new Scope(options.scope)
 
         const { clientId, client, agent } = this
-        const {nonce, state} = await agent.generateNonceState()
+        const {nonce, state, verifier} = await agent.generateRequestParams()
 
         let requestParams = {
             ...options,
@@ -48,9 +48,10 @@ export default class WebAuth {
             scope: scope.toString(),
             responseType: 'code id_token',
             response_mode: 'fragment', // 'query' is unsafe and not supported, the hash fragment is also default
-            redirectUri: client.redirectUri,
             state: state,
-            nonce: nonce
+            nonce: nonce,
+            code_challenge_method: 'plain',
+            code_challenge: verifier
         }
         const loginUrl = this.client.loginUrl(requestParams)
 

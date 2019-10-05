@@ -88,6 +88,7 @@ RCT_EXPORT_METHOD(oauthParameters:(RCTResponseSenderBlock)callback) {
 - (NSDictionary *)generateOAuthParameters {
     return @{
              @"nonce": [self randomValue],
+             @"verifier": [self randomValue],
              @"state": [self randomValue]
              };
 }
