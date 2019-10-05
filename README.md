@@ -118,7 +118,8 @@ android:windowSoftInputMode="adjustResize">
     <category android:name="android.intent.category.DEFAULT" />
     <category android:name="android.intent.category.BROWSABLE" />
     <data
-        android:pathPrefix="/${applicationId}/android/callback"
+        android:pathPrefix="/android/callback"
+        android:host="${applicationId}"
         android:scheme="${applicationId}" />
 </intent-filter>
 </activity>
