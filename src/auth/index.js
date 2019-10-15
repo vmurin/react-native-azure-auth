@@ -107,7 +107,8 @@ export default class Auth {
         const payload = validate({
             parameters: {
                 code: { required: true },
-                scope: { required: true }
+                scope: { required: true },
+                code_verifier: { required: true },
             }
         }, input)
 

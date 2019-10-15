@@ -13,6 +13,8 @@ describe('auth', () => {
     const redirectUri = 'https://mysite.com/callback'
     const scope = new Scope() // base scope
     const state = 'a random state for auth'
+    const verifier = 'some Azure verifier code'
+
     const tokens = {
         status: 200,
         body: {
@@ -117,28 +119,28 @@ describe('auth', () => {
         it('should send correct payload', async () => {
             fetchMock.postOnce('https://login.microsoftonline.com/common/oauth2/v2.0/token', tokens)
             expect.assertions(1)
-            await auth.exchange({code: 'a code', state, scope: 'openid'})
+            await auth.exchange({code: 'a code', code_verifier: verifier, scope: 'openid'})
             expect(fetchMock.lastCall()).toMatchSnapshot()
         })
 
         it('should return successful response', async () => {
             fetchMock.postOnce('https://login.microsoftonline.com/common/oauth2/v2.0/token', tokens)
             expect.assertions(1)
-            const parameters = {code: 'a code', state, scope: 'openid'}
+            const parameters = {code: 'a code', code_verifier: verifier, scope: 'openid'}
             await expect(auth.exchange(parameters)).resolves.toMatchSnapshot()
         })
 
         it('should handle oauth error', async () => {
             fetchMock.postOnce('https://login.microsoftonline.com/common/oauth2/v2.0/token', oauthError)
             expect.assertions(1)
-            const parameters = {code: 'a code', state, scope: 'openid'}
+            const parameters = {code: 'a code', code_verifier: verifier, scope: 'openid'}
             await expect(auth.exchange(parameters)).rejects.toMatchSnapshot()
         })
 
         it('should handle unexpected error', async () => {
             fetchMock.postOnce('https://login.microsoftonline.com/common/oauth2/v2.0/token', unexpectedError)
             expect.assertions(1)
-            const parameters = {code: 'a code', state, scope: 'openid'}
+            const parameters = {code: 'a code', code_verifier: verifier, scope: 'openid'}
             await expect(auth.exchange(parameters)).rejects.toMatchSnapshot()
         })
     })

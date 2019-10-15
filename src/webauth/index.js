@@ -90,7 +90,12 @@ export default class WebAuth {
                 status: 0
             })
         }
-        const tokenResponse = await client.exchange({code, scope: scope.toString()})
+        const tokenResponse = await client.exchange({
+            code, 
+            scope: scope.toString(), 
+            code_verifier: verifier
+        })
+
         if (tokenResponse.refreshToken) {
             this.client.cache.saveRefreshToken(tokenResponse)
         }

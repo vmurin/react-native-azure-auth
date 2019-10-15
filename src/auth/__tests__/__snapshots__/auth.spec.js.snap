@@ -18,10 +18,10 @@ exports[`auth code exchange should send correct payload 1`] = `
 Array [
   "https://login.microsoftonline.com/common/oauth2/v2.0/token",
   Object {
-    "body": "&code=a%20code&scope=openid&client_id=A_CLIENT_ID_OF_YOUR_ACCOUNT&redirect_uri=my_bundle_id%3A%2F%2Fmy_bundle_id%2FSomeMobile%2Fcallback&grant_type=authorization_code",
+    "body": "&code=a%20code&code_verifier=some%20Azure%20verifier%20code&scope=openid&client_id=A_CLIENT_ID_OF_YOUR_ACCOUNT&redirect_uri=my_bundle_id%3A%2F%2Fmy_bundle_id%2FSomeMobile%2Fcallback&grant_type=authorization_code",
     "headers": Object {
       "Accept": "application/json, image/*;q=0.1",
-      "Content-Length": 166,
+      "Content-Length": 211,
       "Content-Type": "application/x-www-form-urlencoded",
     },
     "method": "POST",
