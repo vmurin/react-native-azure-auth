@@ -73,13 +73,15 @@ Callback URLs are the URIs that Azure AD invokes after the authentication proces
 {YOUR_APP_PACKAGE_NAME}://{YOUR_APP_PACKAGE_NAME}/android/callback
 ```
 
-**Note:** Be aware of allowed characters for the scheme part of URI. According to RFC 2396 (Section 3.1):
+**Note 1:** Make sure to replace {YOUR_BUNDLE_IDENTIFIER} and {YOUR_APP_PACKAGE_NAME} with the actual values for your application.
+
+**Note 2:** Be aware of allowed characters for the scheme part of URI. According to RFC 2396 (Section 3.1):
 
 ```text
 scheme = alpha *( alpha | digit | "+" | "-" | "." )
 ```
 
-As you can see, allowed in identifier and package name underscore (`_`) character is not allowed in the URI scheme!
+As you can see, allowed in identifier and package name underscore (`_`) character is NOT allowed in the URI scheme!
 
 ### App Configuration
 
@@ -149,7 +151,7 @@ Inside the `ios` folder open the `Info.plist` and locate the value for `CFBundle
 <string>org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)</string>
 ```
 
-> The value `org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)` is the default for apps created with React Native CLI, you may have a different value. 
+> The value `org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)` is the default for apps created with React Native CLI, you may have a different value.
 >
 > It is advisable to replace it with your own meaningfull ID in reverse DNS format. e.g. _com.my-domain.native-app_
 
@@ -165,14 +167,13 @@ and then register a URL type entry using the value of `CFBundleIdentifier` as th
         <string>AzureAuth</string>
         <key>CFBundleURLSchemes</key>
         <array>
-            <string>org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)</string>
+            <string>com.my-domain.native-app</string>
         </array>
     </dict>
 </array>
 ```
 
->**Attention:** The `<string>` value for `CFBundleURLSchemes` key should be the literal value of the Bundle Identifier with no $ variables, for example: _com.my-domain.native-app_
-
+>**Attention:** The `<string>` value for `CFBundleURLSchemes` key MUST be the literal value of the Bundle Identifier with NO $-variables. In the example above the string `com.my-domain.native-app` represents _your_ Bundle Identifier.
 
 For more info please read [react native docs](https://facebook.github.io/react-native/docs/linking.html)
 
