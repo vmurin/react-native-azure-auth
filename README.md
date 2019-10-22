@@ -8,6 +8,8 @@ The library uses the latest __V2.0__ version of the [Azure AD endponts](https://
 `react-native-azure-auth` implements authentication flow using `fetch` API and native components.
 The OpenID connect and `autorization_code` grant are implemented.
 
+JS Docs can be accesed under <https://vmurin.github.io/react-native-azure-auth/>
+
 ## Installation
 
 Install `react-native-azure-auth` using [npm](https://www.npmjs.com)
