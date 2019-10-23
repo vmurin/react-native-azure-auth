@@ -107,14 +107,20 @@ export default class TokenCache {
 
     async getRefreshToken(userId) {
         const key = BaseTokenItem.createRefreshTokenKey(this.clientId, userId)
+        let refreshToken = null
+
         if (this.cache[key]) {
-            return RefreshTokenItem.fromJson(this.cache[key])
+            refreshToken = RefreshTokenItem.fromJson(this.cache[key])
         }
         if (this.persistent) {
             const token = await AsyncStorage.getItem(key)
-            return RefreshTokenItem.fromJson(token)
+            refreshToken = RefreshTokenItem.fromJson(token)
         }
-        return null
+        if ((this.cache[key] || this.persistent) && !refreshToken) {
+            // broken token was saved
+            this.removeToken(key)
+        }
+        return refreshToken
     }
 
     async getUserAccessTokenKeys(userId){

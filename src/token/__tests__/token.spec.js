@@ -1,4 +1,5 @@
 import { extractIdToken } from '../token'
+import RefreshTokenItem from '../refreshTokenItem'
 
 const testIdToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlNTUWRoSTFjS3ZoUUVEU0p4RTJnR1lzNDBRMCJ9.\
 eyJhdWQiOiJiNWQxMjBmNi0wNGZiLTQ4MWEtODhmNi1iYzJkZmQ0NGZkYTciLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubG\
@@ -21,4 +22,11 @@ describe('token actions', () => {
     it('should contain user name', () => {
         expect(extractIdToken(testIdToken)).toHaveProperty('preferred_username')
     })    
+})
+
+describe('refresh token', () => {
+    let json = JSON.stringify(extractIdToken(testIdToken))
+    it('should return null for invalid JSON', () => {
+        expect(RefreshTokenItem.fromJson(json)).toBeNull()
+    })
 })
