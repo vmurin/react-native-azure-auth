@@ -111,7 +111,6 @@ export default class WebAuth {
     
     /**
    *  Removes Azure session
-   *  In iOS it will use `SFSafariViewController` and in Android Chrome Custom Tabs.
    *
    * @param {Object} options parameters to send
    * @returns {Promise}
