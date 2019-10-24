@@ -43,9 +43,12 @@ export default class BaseTokenItem {
     }
 
     static createTokenKeyPrefix(clientId, userId) {
-        return Base64.encodeURI(clientId) +
-            TOKEN_CACHE_KEY_DELIMITER +
-            Base64.encodeURI(userId)
+        let prefix = Base64.encodeURI(clientId) +
+        TOKEN_CACHE_KEY_DELIMITER
+        if (userId) {
+            prefix = prefix + Base64.encodeURI(userId)
+        }
+        return prefix
     }
 
     static scopeFromKey(key) {
