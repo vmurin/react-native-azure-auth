@@ -43,7 +43,7 @@ export default class TokenCache {
         let accessToken = new AccessTokenItem(tokenResponse, this.clientId)
         const key = accessToken.tokenKey()
         // remove scope intersection  
-        const userTokens = await this.getUserAccessTokenKeys(accessToken.userId)
+        const userTokens = await this.getAllUserTokenKeys(accessToken.userId)
         userTokens.forEach((uTokenKey) => {
             const scopeFormKey = BaseTokenItem.scopeFromKey(uTokenKey)
             if (scopeFormKey && !accessToken.scope.equals(scopeFormKey) &&
@@ -123,21 +123,21 @@ export default class TokenCache {
         return refreshToken
     }
 
-    async getUserAccessTokenKeys(userId){
-        const accessTokenKeyPrefix = BaseTokenItem.createTokenKeyPrefix(this.clientId, userId)
+    async getAllUserTokenKeys(userId){
+        const tokenKeyPrefix = BaseTokenItem.createTokenKeyPrefix(this.clientId, userId)
         console.info('getting tokens')
-        let accessTokenKeys = []
+        let tokenKeys = []
         if (this.persistent) {
             let keys = await AsyncStorage.getAllKeys()
             for (const key of keys) {
-                if (key.startsWith(accessTokenKeyPrefix)) accessTokenKeys.push(key)
+                if (key.startsWith(tokenKeyPrefix)) tokenKeys.push(key)
             }
         } else {
             for (const key of Object.getOwnPropertyNames(this.cache)) {
-                if (key.startsWith(accessTokenKeyPrefix)) accessTokenKeys.push(key)
+                if (key.startsWith(tokenKeyPrefix)) tokenKeys.push(key)
             }
         }
 
-        return accessTokenKeys
+        return tokenKeys
     }
 }
