@@ -21,16 +21,17 @@ let _instance = null
  */
 export default class TokenCache {
     constructor(input = {}) {
-        if (_instance) {
-            return _instance
-        }
-
+        // for better testability check params first
         const params = validate({
             parameters: {
                 clientId: { required: true },
                 persistent: { required: false },
             }
         }, input)
+
+        if (_instance) {
+            return _instance
+        }
 
         this.cache = {}
         this.clientId = params.clientId
