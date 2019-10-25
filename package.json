@@ -8,7 +8,7 @@
     "test:ci": "jest --coverage && codecov -t ${CODECOV_TOKEN}",
     "jsdoc:generate": "jsdoc --configure .jsdoc.json --verbose",
     "release:clean": "node scripts/cleanup.js",
-    "preversion": "node scripts/prepare.js",
+    "preversion": "jest && node scripts/prepare.js",
     "version": "node scripts/jsdocs.js",
     "postversion": "npm run release:clean"
   },
