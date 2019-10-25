@@ -21,8 +21,8 @@ let _instance = null
  */
 export default class TokenCache {
     constructor(input = {}) {
-        if (!_instance) {
-            _instance = this
+        if (_instance) {
+            return _instance
         }
 
         const params = validate({
@@ -36,7 +36,7 @@ export default class TokenCache {
         this.clientId = params.clientId
         this.persistent = params.persistent || true // by default enabled
 
-        return _instance
+        _instance = this
     }
 
     async saveAccessToken(tokenResponse) {
