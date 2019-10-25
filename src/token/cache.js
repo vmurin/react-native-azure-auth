@@ -123,6 +123,11 @@ export default class TokenCache {
         return refreshToken
     }
 
+    /**
+     * Return all tokens for the client ID the cache initialized with and
+     * given user ID. If userId omitted - for all users of current client ID
+     * 
+     */
     async getAllUserTokenKeys(userId){
         const tokenKeyPrefix = BaseTokenItem.createTokenKeyPrefix(this.clientId, userId)
         console.info('getting tokens')

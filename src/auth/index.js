@@ -214,6 +214,7 @@ export default class Auth {
    * @returns {Promise}
    * @see https://developer.microsoft.com/en-us/graph/docs/concepts/overview
    * @see https://developer.microsoft.com/en-us/graph/docs/api-reference/v1.0/api/user_get
+   * 
    * @memberof Auth
    */
     msGraphRequest(parameters = {}) {
@@ -230,6 +231,21 @@ export default class Auth {
         return client
             .get(clearedPath) // get info for currently authorized user
             .then(responseHandler)
+    }
+
+    /**
+     * Clear persystent cache - AsyncStorage - for given client ID and user ID or ALL users
+     * 
+     * @param {String} userId ID of user whose tokens will be cleared/deleted
+     *      if ommited - tokens for ALL users and current client will be cleared
+     * 
+     * @memberof Auth
+     */
+    async clearPersistenCache(userId = null) {
+        const tokenKeys = await this.cache.getAllUserTokenKeys(userId)
+        tokenKeys.forEach((uTokenKey) => {
+            this.removeToken(uTokenKey)
+        })
     }
 
 }
