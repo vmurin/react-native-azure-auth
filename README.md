@@ -66,7 +66,7 @@ Callback URLs are the URIs that Azure AD invokes after the authentication proces
 ##### iOS - default redirect URI structure
 
 ```text
-{YOUR_BUNDLE_IDENTIFIER}://${YOUR_BUNDLE_IDENTIFIER}/ios/callback
+{YOUR_BUNDLE_IDENTIFIER}://{YOUR_BUNDLE_IDENTIFIER}/ios/callback
 ```
 
 ##### Android - default redirect URI structure
