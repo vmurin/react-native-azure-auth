@@ -32,7 +32,7 @@ export default class WebAuth {
    * @param {String} [options.scope] scopes requested for the issued tokens. 
    *    OpenID Connect scopes are always added to every request. `openid profile offline_access`
    *    @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes
-   * @param {String} parameters.prompt (optional) indicates the type of user interaction that is required. 
+   * @param {String} [options.prompt] (optional) indicates the type of user interaction that is required. 
    *    The only valid values at this time are 'login', 'none', and 'consent'.
    * @returns {Promise<BaseTokenItem | AccessTokenItem>}
    *
