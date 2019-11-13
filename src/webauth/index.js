@@ -32,6 +32,8 @@ export default class WebAuth {
    * @param {String} [options.scope] scopes requested for the issued tokens. 
    *    OpenID Connect scopes are always added to every request. `openid profile offline_access`
    *    @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes
+   * @param {String} parameters.prompt (optional) indicates the type of user interaction that is required. 
+   *    The only valid values at this time are 'login', 'none', and 'consent'.
    * @returns {Promise<BaseTokenItem | AccessTokenItem>}
    *
    * @memberof WebAuth
@@ -113,6 +115,7 @@ export default class WebAuth {
    *  Removes Azure session
    *
    * @param {Object} options parameters to send
+   * @param {Boolean} [options.closeOnLoad] close browser window on 'Loaded' event (works only on iOS)
    * @returns {Promise}
    *
    * @memberof WebAuth
@@ -120,6 +123,7 @@ export default class WebAuth {
     clearSession(options = {}) {
         const { client, agent } = this
         const logoutUrl = client.logoutUrl(options)
-        return agent.openWeb(logoutUrl, true)
+        let closeOnLoad = 'closeOnLoad' in options ? options.closeOnLoad : true
+        return agent.openWeb(logoutUrl, closeOnLoad)
     }
 }
