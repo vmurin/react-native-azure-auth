@@ -225,7 +225,7 @@ You can consult a tiny sample project [react-native-azure-auth-sample](https://g
 
 ## Issue Reporting
 
-If you have found a bug or if you have a feature request, please report them at this repository issues section. Please do not report security vulnerabilities on the public GitHub issue tracker.
+If you have found a bug or if you have a feature request, please report them at this repository issues section. Please take a little time and use search functionality of the issue tracker before posting a new issue, you can find some usefull infos in already closed issues. Please also do not report security vulnerabilities on the public GitHub issue tracker.
 
 ## Author
 
