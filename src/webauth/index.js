@@ -3,6 +3,7 @@ import url from 'url'
 import AuthError from '../auth/authError'
 import Scope from '../token/scope'
 import BaseTokenItem from '../token/baseTokenItem'
+import { validate } from '../utils/validate'
 
 /**
  * Helper to perform Auth against Azure AD login page
@@ -120,10 +121,16 @@ export default class WebAuth {
    *
    * @memberof WebAuth
    */
-    clearSession(options = {}) {
+    clearSession(options = {closeOnLoad: true}) {
         const { client, agent } = this
-        const logoutUrl = client.logoutUrl(options)
-        let closeOnLoad = 'closeOnLoad' in options ? options.closeOnLoad : true
-        return agent.openWeb(logoutUrl, closeOnLoad)
+        const parsedOptions = validate({
+            parameters: {
+                closeOnLoad: { required: true },
+            },
+            validate: true // not declared params are NOT allowed: 
+        }, options)
+
+        const logoutUrl = client.logoutUrl()
+        return agent.openWeb(logoutUrl, parsedOptions.closeOnLoad)
     }
 }
