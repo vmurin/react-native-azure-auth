@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.util.Base64;
+import android.content.ActivityNotFoundException;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
@@ -56,15 +57,24 @@ public class AzureAuthModule extends ReactContextBaseJavaModule implements Lifec
         this.closeOnLoad = closeOnLoad;
 
         if (activity != null) {
-            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-            CustomTabsIntent customTabsIntent = builder.build();
-            customTabsIntent.launchUrl(activity, Uri.parse(url));
+            try {
+                CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                CustomTabsIntent customTabsIntent = builder.build();
+                customTabsIntent.launchUrl(activity, Uri.parse(url));
+            } catch (ActivityNotFoundException e) {
+                // No chrome installed on device
+                startNewBrowserActivity(url);
+            }
         } else {
-            final Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.setData(Uri.parse(url));
-            getReactApplicationContext().startActivity(intent);
+            startNewBrowserActivity(url);
         }
+    }
+
+    private void startNewBrowserActivity(String url) {
+        final Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setData(Uri.parse(url));
+        getReactApplicationContext().startActivity(intent);
     }
 
     @ReactMethod
