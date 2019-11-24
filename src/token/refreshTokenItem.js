@@ -27,12 +27,12 @@ export default class RefreshTokenItem extends BaseTokenItem{
     }
 
     static fromJson(objStr) {
-        let obj = Object.create(RefreshTokenItem.prototype)
-        obj = Object.assign(obj, JSON.parse(objStr))
-        if (obj['refreshToken']) {
-            return obj
+        const rawObject = BaseTokenItem.rawObjectFromJson(objStr)
+        if (!rawObject || !rawObject['refreshToken']) {
+            return null
         }
-        return null
+        const obj = Object.create(RefreshTokenItem.prototype)
+        return Object.assign(obj, rawObject)
     }
     
 }

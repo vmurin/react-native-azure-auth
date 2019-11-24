@@ -66,4 +66,11 @@ export default class BaseTokenItem {
     toString() {
         return JSON.stringify(this)
     }
+
+    static rawObjectFromJson(objStr) {
+        if (typeof objStr !== 'string' && !(objStr instanceof String) || objStr.length < 5) {
+            return null
+        }
+        return JSON.parse(objStr)
+    }
 }
