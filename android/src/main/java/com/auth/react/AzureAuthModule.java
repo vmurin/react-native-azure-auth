@@ -50,21 +50,10 @@ public class AzureAuthModule extends ReactContextBaseJavaModule implements Lifec
 
     @ReactMethod
     public void showUrl(String url, boolean closeOnLoad, Callback callback) {
-        final Activity activity = getCurrentActivity();
-
-        this.callback = callback;
-        this.closeOnLoad = closeOnLoad;
-
-        if (activity != null) {
-            CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
-            CustomTabsIntent customTabsIntent = builder.build();
-            customTabsIntent.launchUrl(activity, Uri.parse(url));
-        } else {
-            final Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            intent.setData(Uri.parse(url));
-            getReactApplicationContext().startActivity(intent);
-        }
+      final Intent intent = new Intent(Intent.ACTION_VIEW);
+      intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+      intent.setData(Uri.parse(url));
+      getReactApplicationContext().startActivity(intent);
     }
 
     @ReactMethod
@@ -75,7 +64,7 @@ public class AzureAuthModule extends ReactContextBaseJavaModule implements Lifec
         parameters.putString("verifier", this.generateRandomValue());
         callback.invoke(parameters);
     }
-   
+
     @ReactMethod
     public void hide() {
         AzureAuthModule.this.callback = null;
