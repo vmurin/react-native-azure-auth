@@ -115,7 +115,9 @@ export default class TokenCache {
         }
         if (this.persistent) {
             const token = await AsyncStorage.getItem(key)
-            refreshToken = RefreshTokenItem.fromJson(token)
+            if (token) {
+              refreshToken = RefreshTokenItem.fromJson(token)
+            }
         }
         if ((this.cache[key] || this.persistent) && !refreshToken) {
             // broken token was saved
