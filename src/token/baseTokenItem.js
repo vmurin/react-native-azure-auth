@@ -7,6 +7,8 @@ const TOKEN_CACHE_KEY_DELIMITER = '$'
 /**
  * Class represent basic token cache item
  * 
+ * Note: userId is handled in case insencitive way for token cache keys
+ * 
  * @namespace TokenCache.BaseTokenItem
  * 
  * @param {Object} tokenResponse 
@@ -29,14 +31,14 @@ export default class BaseTokenItem {
     }
 
     static createRefreshTokenKey(clientId, userId) {
-      const lowerCaseUserId = userId ? userId.toLowerCase() : userId
+        const lowerCaseUserId = userId ? userId.toLowerCase() : userId
         return Base64.encodeURI(clientId) +
             TOKEN_CACHE_KEY_DELIMITER +
             Base64.encodeURI(lowerCaseUserId)
     }
 
     static createAccessTokenKey(clientId, userId, scope) {
-      const lowerCaseUserId = userId ? userId.toLowerCase() : userId
+        const lowerCaseUserId = userId ? userId.toLowerCase() : userId
         return Base64.encodeURI(clientId) +
             TOKEN_CACHE_KEY_DELIMITER +
             Base64.encodeURI(lowerCaseUserId) +
@@ -47,7 +49,7 @@ export default class BaseTokenItem {
     static createTokenKeyPrefix(clientId, userId) {
         let prefix = Base64.encodeURI(clientId) + TOKEN_CACHE_KEY_DELIMITER
         if (userId) {
-            const lowerCaseUserId = userId ? userId.toLowerCase() : userId
+            const lowerCaseUserId = userId.toLowerCase()
             prefix = prefix + Base64.encodeURI(lowerCaseUserId)
         }
 
