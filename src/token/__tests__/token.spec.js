@@ -1,5 +1,6 @@
 import { extractIdToken } from '../token'
 import RefreshTokenItem from '../refreshTokenItem'
+import AccessTokenItem from '../accessTokenItem'
 
 const testIdToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6IlNTUWRoSTFjS3ZoUUVEU0p4RTJnR1lzNDBRMCJ9.\
 eyJhdWQiOiJiNWQxMjBmNi0wNGZiLTQ4MWEtODhmNi1iYzJkZmQ0NGZkYTciLCJpc3MiOiJodHRwczovL2xvZ2luLm1pY3Jvc29mdG9ubG\
@@ -21,12 +22,31 @@ describe('token actions', () => {
 
     it('should contain user name', () => {
         expect(extractIdToken(testIdToken)).toHaveProperty('preferred_username')
-    })    
+    })
 })
 
 describe('refresh token', () => {
     let json = JSON.stringify(extractIdToken(testIdToken))
-    it('should return null for invalid JSON', () => {
+    it('should return null for empty JSON string input', () => {
+        expect(RefreshTokenItem.fromJson('')).toBeNull()
+    })
+    it('should return null for incorrect JSON string input', () => {
+        expect(RefreshTokenItem.fromJson('ssssss')).toBeNull()
+    })
+    it('should return null for invalid JSON string', () => {
         expect(RefreshTokenItem.fromJson(json)).toBeNull()
+    })
+})
+
+describe('access token', () => {
+    let json = JSON.stringify(extractIdToken(testIdToken))
+    it('should return null for empty JSON string input', () => {
+        expect(AccessTokenItem.fromJson('')).toBeNull()
+    })
+    it('should return null for incorrect JSON string input', () => {
+        expect(AccessTokenItem.fromJson('ssssss')).toBeNull()
+    })
+    it('should return null for invalid JSON token', () => {
+        expect(AccessTokenItem.fromJson(json)).toBeNull()
     })
 })
