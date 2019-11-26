@@ -73,6 +73,11 @@ export default class BaseTokenItem {
         if (typeof objStr !== 'string' && !(objStr instanceof String) || objStr.length < 5) {
             return null
         }
-        return JSON.parse(objStr)
+        try {
+            return JSON.parse(objStr)
+        } catch (e) {
+            console.warn('Incorect JSON token string: ', objStr)
+            return null
+        }
     }
 }
