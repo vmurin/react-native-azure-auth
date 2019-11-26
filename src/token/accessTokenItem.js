@@ -39,7 +39,7 @@ export default class AccessTokenItem extends BaseTokenItem{
 
     static fromJson(objStr) {
         const rawObject = BaseTokenItem.rawObjectFromJson(objStr)
-        if (!rawObject || !obj['accessToken']) {
+        if (!rawObject || !rawObject['accessToken']) {
             return null
         }
         const obj = Object.create(AccessTokenItem.prototype)
