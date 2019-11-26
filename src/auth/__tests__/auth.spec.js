@@ -45,7 +45,7 @@ describe('auth', () => {
         beforeEach(() => {
             NativeModules.AzureAuth = AzureAuth
             AzureAuth.reset()
-        })        
+        })
         fetchMock.restore()
     })
 

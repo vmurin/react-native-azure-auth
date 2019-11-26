@@ -6,12 +6,12 @@ const DEFAULT_EXPIRATION_BUFFER = 300
 
 /**
  * Class represent acces token cache item
- * 
+ *
  * @namespace TokenCache.AccessTokenItem
- * 
- * @param {Object} tokenResponse 
- * @param {String} clientId 
- * 
+ *
+ * @param {Object} tokenResponse
+ * @param {String} clientId
+ *
  * @class AccessTokenItem
  * @extends BaseTokenItem
  * @memberof TokenCache

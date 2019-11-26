@@ -18,11 +18,11 @@ function serializeParams(params) {
 /**
  * Helper to perform HTTP requests
  * Blob (binary) content types are not supported
- * 
+ *
  * Class variables:
  * - baseUrl | authorityUrl: base URL the request path is added to
  * - token: Auth token if the request needs authorization
- * 
+ *
  * @export
  * @class Client
  */
@@ -63,9 +63,9 @@ export default class Client {
 
     /**
      * Helper function to send HTTP requests
-     * 
-     * @param {String} method 
-     * @param {String} url 
+     *
+     * @param {String} method
+     * @param {String} url
      * @param {Object} [body] - request body
      */
     async request(method, url, body) {

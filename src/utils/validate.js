@@ -11,9 +11,9 @@ export default class ParameterError extends BaseError {
 
 /**
  * Applies the validtion and transform rules to the given values
- * 
+ *
  * Possible rules:
- * 
+ *
  *     const rules = {
         parameters: {
             realm: {} // just declared without rules, not required by default
@@ -21,7 +21,7 @@ export default class ParameterError extends BaseError {
             nonce: {required: false}, // not required
             clientId: {toName: 'client_id'}, // key name transform rule
         },
-        validate: true | false // if true - pass through only declared params 
+        validate: true | false // if true - pass through only declared params
         aliases: {
             connection: 'realm',
             clientID: 'clientId'
@@ -31,9 +31,9 @@ export default class ParameterError extends BaseError {
  * - removes not declared in rules values (can be disabled by 'validate: false' parameter)
  * - checks if all required values are exist in values ('required: true')
  * - all values are optional by default (without "required" rule)
- * 
- * @param { Object } rules 
- * @param { Object } values 
+ *
+ * @param { Object } rules
+ * @param { Object } values
  */
 export function validate(rules, values) {
     const { validate = true, parameters, aliases = {} } = rules

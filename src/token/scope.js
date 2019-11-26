@@ -1,17 +1,17 @@
 const BASIC_SCOPE = 'offline_access openid profile'
 /**
  * Azure AD Auth scope representation class
- * 
+ *
  * 1. Remove MS Graph URLs from scope, as it is default for any scope
  * 2. Remove eventual commas and double spaces
  * 3. Sort
  * 4. BASIC SCOPE is always a part of auth requests
- * 
+ *
  * @namespace TokenCache.Scope
- * 
+ *
  * @param {string | Array<String> | ''} scope - without parameters represents
  * BASIC_SCOPE = 'offline_access openid profile'
- * 
+ *
  * @memberof TokenCache
  * @class Scope
  */
@@ -51,16 +51,16 @@ export default class Scope {
         newScope = newScope.replace(new RegExp('https://graph.microsoft.com/', 'g'), '')
             // remove double spaces and commas
             .replace(/,+/g, '').replace(/\s+/g, ' ').trim()
-        // Sort 
+        // Sort
         return newScope.split(' ').sort().join(' ')
     }
     
     /**
      * Check if newScope is a subset of baseScope
-     * 
-     * @param {Array} newScope 
-     * @param {Array} otherScope 
-     * 
+     *
+     * @param {Array} newScope
+     * @param {Array} otherScope
+     *
      * @returns {boolean}
      */
     isSubsetOf(otherScope) {
@@ -68,7 +68,7 @@ export default class Scope {
             throw new Error('Parameter is not a Scope() instance')
         }
         if (otherScope.basicScope || this.basicScope) {
-            // The condition order here is important! 
+            // The condition order here is important!
             // With the second condition we should only return true if the first one is false
             return true
         }
@@ -79,8 +79,8 @@ export default class Scope {
     /**
      * Copmare if the current instance scope intersects witt one from parameter
      * Only NON basic scopes are compared
-     * 
-     * @param {Scope} otherScope 
+     *
+     * @param {Scope} otherScope
      */
     isIntersects(otherScope) {
         if (!(otherScope instanceof Scope)) {

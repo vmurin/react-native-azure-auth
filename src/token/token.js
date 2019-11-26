@@ -11,7 +11,7 @@ function isEmptyString(str) {
 
 /**
  * Decode ID token from
- * 
+ *
  * @param {string} encoded IdToken string
  * @returns {Object | null} - in cas of error null is returned
  */

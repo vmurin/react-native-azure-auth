@@ -1,4 +1,4 @@
-/* eslint no-console: 0 */ 
+/* eslint no-console: 0 */
 const levels = {
     ERROR : 4,
     WARN : 3,
@@ -13,8 +13,8 @@ export default {
     /**
    * Set log level, this value should be a string
    * 	ERROR, WARN, INFO, DEBUG, TRACE
-   * @param  {String} val 
-   * 
+   * @param  {String} val
+   *
    * @memberof Globals
    */
     setLevel: (val) => {

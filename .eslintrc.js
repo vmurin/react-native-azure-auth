@@ -1,7 +1,7 @@
 module.exports = {
     "parser": "babel-eslint",
-    "plugins": [      
-    ],    
+    "plugins": [
+    ],
     "env": {
         "es6": true,
         "node": true
@@ -35,5 +35,5 @@ module.exports = {
             "error",
             "never"
         ]
-    }    
+    }
 };

@@ -8,14 +8,14 @@ let _instance = null
 
 /**
  * Token persistent cache
- * 
+ *
  * @namespace TokenCache
- * 
+ *
  * @param {Object} input - init parameters
  * @param {String} input.clientId
  * @param {Boolean} input.persistent - if true - the RN `AsyncStorage` is used for persistent caching,
  *         otherwise only the class instance. (default: true)
- * 
+ *
  * @class TokenCache
  * @memberof TokenCache
  */
@@ -43,7 +43,7 @@ export default class TokenCache {
     async saveAccessToken(tokenResponse) {
         let accessToken = new AccessTokenItem(tokenResponse, this.clientId)
         const key = accessToken.tokenKey()
-        // remove scope intersection  
+        // remove scope intersection
         const userTokens = await this.getAllUserTokenKeys(accessToken.userId)
         userTokens.forEach((uTokenKey) => {
             const scopeFormKey = BaseTokenItem.scopeFromKey(uTokenKey)
@@ -101,7 +101,7 @@ export default class TokenCache {
                     this.cache[key] = token
                     return AccessTokenItem.fromJson(token)
                 }
-            }            
+            }
         }
         return null
     }
@@ -127,7 +127,7 @@ export default class TokenCache {
     /**
      * Return all tokens for the client ID the cache initialized with and
      * given user ID. If userId omitted - for all users of current client ID
-     * 
+     *
      */
     async getAllUserTokenKeys(userId){
         const tokenKeyPrefix = BaseTokenItem.createTokenKeyPrefix(this.clientId, userId)

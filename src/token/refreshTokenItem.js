@@ -2,12 +2,12 @@ import BaseTokenItem from './baseTokenItem'
 
 /**
  * Class represent refresh token cache item
- * 
+ *
  * @namespace TokenCache.RefreshTokenItem
- * 
- * @param {Object} tokenResponse 
- * @param {String} clientId 
- * 
+ *
+ * @param {Object} tokenResponse
+ * @param {String} clientId
+ *
  * @class RefreshTokenItem
  * @extends BaseTokenItem
  * @memberof TokenCache

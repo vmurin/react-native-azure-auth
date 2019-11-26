@@ -9,7 +9,7 @@ import { validate } from '../utils/validate'
  * Helper to perform Auth against Azure AD login page
  *
  * It will use `/authorize` endpoint of the Authorization Server (AS)
- * with Code Grant 
+ * with Code Grant
  *
  * @export
  * @class WebAuth
@@ -30,10 +30,10 @@ export default class WebAuth {
    * In iOS it will use `SFSafariViewController` and in Android `Chrome Custom Tabs`.
    *
    * @param {Object} options parameters to send
-   * @param {String} [options.scope] scopes requested for the issued tokens. 
+   * @param {String} [options.scope] scopes requested for the issued tokens.
    *    OpenID Connect scopes are always added to every request. `openid profile offline_access`
    *    @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes
-   * @param {String} [options.prompt] (optional) indicates the type of user interaction that is required. 
+   * @param {String} [options.prompt] (optional) indicates the type of user interaction that is required.
    *    The only valid values at this time are 'login', 'none', and 'consent'.
    * @returns {Promise<BaseTokenItem | AccessTokenItem>}
    *
@@ -94,8 +94,8 @@ export default class WebAuth {
             })
         }
         const tokenResponse = await client.exchange({
-            code, 
-            scope: scope.toString(), 
+            code,
+            scope: scope.toString(),
             code_verifier: verifier
         })
 
@@ -127,7 +127,7 @@ export default class WebAuth {
             parameters: {
                 closeOnLoad: { required: true },
             },
-            validate: true // not declared params are NOT allowed: 
+            validate: true // not declared params are NOT allowed:
         }, options)
 
         const logoutUrl = client.logoutUrl()

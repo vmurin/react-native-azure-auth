@@ -6,14 +6,14 @@ const TOKEN_CACHE_KEY_DELIMITER = '$'
 
 /**
  * Class represent basic token cache item
- * 
+ *
  * Note: userId is handled in case insencitive way for token cache keys
- * 
+ *
  * @namespace TokenCache.BaseTokenItem
- * 
- * @param {Object} tokenResponse 
- * @param {String} clientId 
- * 
+ *
+ * @param {Object} tokenResponse
+ * @param {String} clientId
+ *
  * @class BaseTokenItem
  * @memberof TokenCache
  */
