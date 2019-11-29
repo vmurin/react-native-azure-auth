@@ -1,4 +1,4 @@
-import { validate } from '../validate'
+import { validate, ParameterTypeError } from '../validate'
 import faker from 'faker'
 
 describe('validate', () => {
@@ -6,7 +6,7 @@ describe('validate', () => {
     const rules = {
         parameters: {
             state: {required: true},
-            nonce: {required: false},
+            nonce: {required: false, type: 'string'},
             clientId: {required: false, toName: 'client_id'},
             realm: {}
         },
@@ -81,5 +81,14 @@ describe('validate', () => {
             state,
             'client_id': clientId
         })
+    })
+
+    it('should fail on incorrect object type', () => {
+        const state = faker.random.uuid()
+        const values = {
+            state,
+            nonce: 333
+        }        
+        expect(() => validate(rules, values)).toThrow(ParameterTypeError)
     })
 })
