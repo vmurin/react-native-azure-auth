@@ -4,6 +4,19 @@ import Scope from './scope'
 
 const TOKEN_CACHE_KEY_DELIMITER = '$'
 
+function normalizeId(id) {
+    if (!id) {
+        throw new Error('Id is null or undefined: ', id)
+    }
+    if (typeof id === 'string') {
+        return id.toLocaleLowerCase()
+    }
+    if (typeof id === 'number') {
+        return id.toString()
+    }
+    throw new Error('Invalid id: ', id)
+}
+
 /**
  * Class represent basic token cache item
  *
@@ -31,17 +44,15 @@ export default class BaseTokenItem {
     }
 
     static createRefreshTokenKey(clientId, userId) {
-        const lowerCaseUserId = userId ? userId.toLowerCase() : userId
         return Base64.encodeURI(clientId) +
             TOKEN_CACHE_KEY_DELIMITER +
-            Base64.encodeURI(lowerCaseUserId)
+            Base64.encodeURI(normalizeId(userId))
     }
 
     static createAccessTokenKey(clientId, userId, scope) {
-        const lowerCaseUserId = userId ? userId.toLowerCase() : userId
         return Base64.encodeURI(clientId) +
             TOKEN_CACHE_KEY_DELIMITER +
-            Base64.encodeURI(lowerCaseUserId) +
+            Base64.encodeURI(normalizeId(userId)) +
             TOKEN_CACHE_KEY_DELIMITER +
             Base64.encodeURI(scope.toString())
     }
@@ -49,8 +60,7 @@ export default class BaseTokenItem {
     static createTokenKeyPrefix(clientId, userId) {
         let prefix = Base64.encodeURI(clientId) + TOKEN_CACHE_KEY_DELIMITER
         if (userId) {
-            const lowerCaseUserId = userId.toLowerCase()
-            prefix = prefix + Base64.encodeURI(lowerCaseUserId)
+            prefix = prefix + Base64.encodeURI(normalizeId(userId))
         }
 
         return prefix
