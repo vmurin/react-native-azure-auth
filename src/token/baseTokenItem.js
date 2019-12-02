@@ -8,7 +8,7 @@ function normalizeId(id) {
     if (!id) {
         throw new Error('Id is null or undefined: ', id)
     }
-    if (typeof id === 'string') {
+    if (typeof id === 'string' || id instanceof String) {
         return id.toLocaleLowerCase()
     }
     if (typeof id === 'number') {
