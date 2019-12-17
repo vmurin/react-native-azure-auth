@@ -87,16 +87,32 @@ export default class Client {
 
         let response = await fetch(url, options)
         const payload = { status: response.status, ok: response.ok, headers: response.headers }
-        try {
-            const json = await response.json()
-            return { ...payload, json }
-        } catch (error) {
-            try {
-                const text = await response.text()
-                return { ...payload, text }
-            } catch (err) {
-                return { ...payload, text: response.statusText }
-            }
+
+        if (response.statusText === 'ok') {
+            if (response.headers.get('Content-Type').startsWith('image')) {
+
+                try {
+                    const blob = await response.blob()
+                    return { ...payload, blob }
+                } catch (err) {
+                    return { ...payload, text: response.statusText };
+                }
+            } else {
+                try {
+                    const json = await response.json()
+                    return { ...payload, json }
+                } catch (error) {
+                    try {
+                        const text = await response.text()
+                        return { ...payload, text }
+                    } catch (err) {
+                        return { ...payload, text: response.statusText }
+                    }
+        
+                }
+            }            
+        } else {
+            return { ...payload, text: response.statusText }
         }
     }
 }
