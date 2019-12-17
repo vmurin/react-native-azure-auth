@@ -88,9 +88,8 @@ export default class Client {
         let response = await fetch(url, options)
         const payload = { status: response.status, ok: response.ok, headers: response.headers }
 
-        if (response.statusText === 'ok') {
+        if (response.ok) {
             if (response.headers.get('Content-Type').startsWith('image')) {
-
                 try {
                     const blob = await response.blob()
                     return { ...payload, blob }
