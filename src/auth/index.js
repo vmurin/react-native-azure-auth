@@ -13,6 +13,9 @@ const { AzureAuth } = NativeModules
 function responseHandler (response, exceptions = {}) {
     if (response.ok && response.json) {
         return toCamelCase(response.json, exceptions)
+    } else if(response.ok && response.data) {
+        const binaryData = new Buffer(response.data, 'binary').toString('base64');
+        return binaryData;
     }
     throw new AuthError(response)
 }
