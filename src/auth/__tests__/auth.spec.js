@@ -26,6 +26,11 @@ describe('auth', () => {
         },
         headers: { 'Content-Type': 'application/json' }
     }
+    const imageResponse = {
+        status: 200,
+        blob: {},
+        headers: { 'Content-Type': 'image/png'}
+    }
     const oauthError = {
         status: 400,
         body: {
@@ -170,6 +175,14 @@ describe('auth', () => {
             fetchMock.postOnce('https://login.microsoftonline.com/common/oauth2/v2.0/token', unexpectedError)
             expect.assertions(1)
             await expect(auth.refreshTokens(parameters)).rejects.toMatchSnapshot()
+        })
+    })
+
+    describe('graph requests', () => {
+        it('should return blob', async () => {
+            fetchMock.getOnce('https://graph.microsoft.com/v1.0/me/photo/$value', imageResponse)
+            expect.assertions(1)
+            await expect(auth.msGraphRequest({token: 'fake_token', path: 'me/photo/$value'})).resolves.toMatchSnapshot()
         })
     })
 
