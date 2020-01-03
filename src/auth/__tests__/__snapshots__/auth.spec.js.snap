@@ -33,6 +33,16 @@ exports[`auth constructor should fail without authority 1`] = `"Missing Azure au
 
 exports[`auth constructor should fail without clientId 1`] = `"Missing clientId in parameters"`;
 
+exports[`auth graph requests should return blob 1`] = `
+Object {
+  "blob": Object {},
+  "headers": Object {
+    "Content-Type": "image/png",
+  },
+  "status": 200,
+}
+`;
+
 exports[`auth loginUrl should return default authorize url 1`] = `"https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=code&scope=offline_access%20openid%20profile&state=a_random_state&client_id=A_CLIENT_ID_OF_YOUR_ACCOUNT&redirect_uri=my_bundle_id%3A%2F%2Fmy_bundle_id%2FSomeMobile%2Fcallback"`;
 
 exports[`auth loginUrl should return default authorize url with extra parameters 1`] = `"https://login.microsoftonline.com/common/oauth2/v2.0/authorize?response_type=code&scope=offline_access%20openid%20profile&state=a_random_state&connection=facebook&client_id=A_CLIENT_ID_OF_YOUR_ACCOUNT&redirect_uri=my_bundle_id%3A%2F%2Fmy_bundle_id%2FSomeMobile%2Fcallback"`;
