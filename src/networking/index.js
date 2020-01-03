@@ -89,7 +89,7 @@ export default class Client {
         const payload = { status: response.status, ok: response.ok, headers: response.headers }
 
         if (response.ok) {
-            if (response.headers.get('Content-Type').startsWith('image')) {
+            if (response.headers.get('Content-Type') && response.headers.get('Content-Type').startsWith('image')) {
                 try {
                     const blob = await response.blob()
                     return { ...payload, blob }
