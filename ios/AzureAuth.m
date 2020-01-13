@@ -30,9 +30,15 @@ RCT_EXPORT_METHOD(hide) {
 }
 
 RCT_EXPORT_METHOD(showUrl:(NSString *)urlString closeOnLoad:(BOOL)closeOnLoad callback:(RCTResponseSenderBlock)callback) {
-    [self presentSafariWithURL:[NSURL URLWithString:urlString]];
-    self.closeOnLoad = closeOnLoad;
-    self.sessionCallback = callback;
+    if (@available(iOS 11.0, *)) {
+        self.sessionCallback = callback;
+        self.closeOnLoad = closeOnLoad;
+        [self presentAuthenticationSession:[NSURL URLWithString:urlString]];
+    } else {
+        [self presentSafariWithURL:[NSURL URLWithString:urlString]];
+        self.sessionCallback = callback;
+        self.closeOnLoad = closeOnLoad;
+    }    
 }
 
 RCT_EXPORT_METHOD(oauthParameters:(RCTResponseSenderBlock)callback) {
@@ -48,6 +54,7 @@ RCT_EXPORT_METHOD(oauthParameters:(RCTResponseSenderBlock)callback) {
 }
 
 #pragma mark - Internal methods
+UIBackgroundTaskIdentifier taskId;
 
 - (void)presentSafariWithURL:(NSURL *)url {
     UIWindow *window = [[UIApplication sharedApplication] keyWindow];
@@ -56,6 +63,71 @@ RCT_EXPORT_METHOD(oauthParameters:(RCTResponseSenderBlock)callback) {
     [self terminateWithError:RCTMakeError(@"Only one Safari can be visible", nil, nil) dismissing:YES animated:NO];
     [[self topViewControllerWithRootViewController:window.rootViewController] presentViewController:controller animated:YES completion:nil];
     self.last = controller;
+}
+
+- (void)presentAuthenticationSession:(NSURL *)url {
+    
+    NSURLComponents *urlComponents = [NSURLComponents componentsWithURL:url
+                                                resolvingAgainstBaseURL:NO];
+    NSArray *queryItems = urlComponents.queryItems;
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name=%@", @"redirect_uri"];
+    NSURLQueryItem *queryItem = [[queryItems
+                                  filteredArrayUsingPredicate:predicate]
+                                 firstObject];
+    NSString *callbackURLScheme = queryItem.value;
+    RCTResponseSenderBlock callback = self.sessionCallback ? self.sessionCallback : ^void(NSArray *_unused) {};
+
+    if (@available(iOS 12.0, *)) {
+        taskId = [UIApplication.sharedApplication beginBackgroundTaskWithExpirationHandler:^{
+            [UIApplication.sharedApplication endBackgroundTask:taskId];
+            taskId = UIBackgroundTaskInvalid;
+        }];        
+        ASWebAuthenticationSession* authenticationSession = [[ASWebAuthenticationSession alloc]
+                                      initWithURL:url callbackURLScheme:callbackURLScheme
+                                      completionHandler:^(NSURL * _Nullable callbackURL,
+                                                          NSError * _Nullable error) {
+                                          if ([[error domain] isEqualToString:ASWebAuthenticationSessionErrorDomain] &&
+                                              [error code] == ASWebAuthenticationSessionErrorCodeCanceledLogin) {
+                                              callback(@[ERROR_CANCELLED, [NSNull null]]);
+                                          } else if(error) {
+                                              callback(@[error, [NSNull null]]);
+                                          } else if(callbackURL) {
+                                              callback(@[[NSNull null], callbackURL.absoluteString]);
+                                          }
+                                          self.authenticationSession = nil;
+                                          [UIApplication.sharedApplication endBackgroundTask:taskId];
+                                          taskId = UIBackgroundTaskInvalid;                                          
+                                      }];
+        #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
+        if (@available(iOS 13.0, *)) {
+            authenticationSession.presentationContextProvider = self;
+        }
+        #endif
+        self.authenticationSession = authenticationSession;
+        [(ASWebAuthenticationSession*) self.authenticationSession start];
+    } else if (@available(iOS 11.0, *)) {
+	    taskId = [UIApplication.sharedApplication beginBackgroundTaskWithExpirationHandler:^{
+            [UIApplication.sharedApplication endBackgroundTask:taskId];
+            taskId = UIBackgroundTaskInvalid;
+        }];        
+        self.authenticationSession = [[SFAuthenticationSession alloc]
+                                      initWithURL:url callbackURLScheme:callbackURLScheme
+                                      completionHandler:^(NSURL * _Nullable callbackURL,
+                                                          NSError * _Nullable error) {
+                                          if ([[error domain] isEqualToString:SFAuthenticationErrorDomain] &&
+                                              [error code] == SFAuthenticationErrorCanceledLogin) {
+                                              callback(@[ERROR_CANCELLED, [NSNull null]]);
+                                          } else if(error) {
+                                              callback(@[error, [NSNull null]]);
+                                          } else if(callbackURL) {
+                                              callback(@[[NSNull null], callbackURL.absoluteString]);
+                                          }
+                                          self.authenticationSession = nil;
+                                          [UIApplication.sharedApplication endBackgroundTask:taskId];
+                                          taskId = UIBackgroundTaskInvalid;                                          
+                                      }];
+        [(SFAuthenticationSession*) self.authenticationSession start];
+    }
 }
 
 - (void)terminateWithError:(id)error dismissing:(BOOL)dismissing animated:(BOOL)animated {
@@ -97,8 +169,8 @@ RCT_EXPORT_METHOD(oauthParameters:(RCTResponseSenderBlock)callback) {
 
 - (void)safariViewControllerDidFinish:(SFSafariViewController *)controller {
     NSDictionary *error = @{
-                            @"error": @"a0.session.user_cancelled",
-                            @"error_description": @"User cancelled the Auth"
+                            @"error": @"azure.session.user_cancelled",
+                            @"error_description": @"User cancelled the Authentification"
                             };
     [self terminateWithError:error dismissing:NO animated:NO];
 }
@@ -108,8 +180,8 @@ RCT_EXPORT_METHOD(oauthParameters:(RCTResponseSenderBlock)callback) {
         [self terminateWithError:[NSNull null] dismissing:YES animated:YES];
     } else if (!didLoadSuccessfully) {
         NSDictionary *error = @{
-                                @"error": @"a0.session.failed_load",
-                                @"error_description": @"Failed to load url"
+                                @"error": @"azure.session.failed_load",
+                                @"error_description": @"Failed to load url in browser"
                                 };
         [self terminateWithError:error dismissing:YES animated:YES];
     }
