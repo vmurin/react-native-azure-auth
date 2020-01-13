@@ -1,6 +1,6 @@
 {
   "name": "react-native-azure-auth",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "An React Native module implements Azure AD V2.0 authentication flow",
   "main": "src/index.js",
   "scripts": {
