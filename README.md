@@ -136,6 +136,21 @@ android:windowSoftInputMode="adjustResize">
 Inside the `ios` folder find the file `AppDelegate.[swift|m]` add the following to it
 
 ```objc
+// iOS 9.x or newer
+#import <React/RCTLinkingManager.h>
+
+- (BOOL)application:(UIApplication *)application
+   openURL:(NSURL *)url
+   options:(NSDictionary<UIApplicationOpenURLOptionsKey,id> *)options
+{
+  return [RCTLinkingManager application:application openURL:url options:options];
+}
+```
+
+If you're targeting iOS 8.x or older, you can use the following code instead:
+
+```objc
+// iOS 8.x or older
 #import <React/RCTLinkingManager.h>
 
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
