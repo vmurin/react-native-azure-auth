@@ -37,9 +37,9 @@ export default class BaseTokenItem {
         this.rawIdToken = tokenResponse.idToken
         let decodedIdToken = extractIdToken(tokenResponse.idToken)
 
-        this.userId = decodedIdToken.preferred_username || decodedIdToken.unique_name
-        this.userName = decodedIdToken.name
-        this.tenantId = decodedIdToken.tid
+        this.userId = decodedIdToken.preferred_username || decodedIdToken.unique_name || decodedIdToken.given_name
+        this.userName = decodedIdToken.name || decodedIdToken.given_name
+        this.tenantId = decodedIdToken.tid || decodedIdToken.sub
         this.idTokenExpireOn = parseInt(decodedIdToken.exp)*1000
     }
 
