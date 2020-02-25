@@ -38,16 +38,21 @@ export default class BaseTokenItem {
         let decodedIdToken = extractIdToken(tokenResponse.idToken)
 
         this.userId = decodedIdToken.preferred_username || decodedIdToken.unique_name || decodedIdToken.sub
-        this.userName = decodedIdToken.name || decodedIdToken.given_name
-        if (decodedIdToken.tid) this.tenantId = decodedIdToken.tid
-        else {
-            const { iss } = decodedIdToken
-            if (iss) {
-                const httpsLength = 'https://'.length
-                const b2cSuffixIndex = iss.indexOf('.b2clogin.com')
-                // parse then tenant id out of the iss string
-                this.tenantId = iss.substring(httpsLength, b2cSuffixIndex)
-            }
+
+        this.userName = decodedIdToken.name
+        if (!this.userName && decodedIdToken.given_name && decodedIdToken.family_name) {
+            this.userName = decodedIdToken.given_name + ' ' + decodedIdToken.family_name
+        } else if (!this.userName) {
+            this.userName = this.userId
+        }
+
+        if (decodedIdToken.tid) {
+            this.tenantId = decodedIdToken.tid
+        } else if (decodedIdToken.iss) {
+            const iss = decodedIdToken.iss
+            const b2cSuffixIndex = iss.indexOf('.b2clogin.com')
+            // parse then tenant ID out of the issuer claim
+            this.tenantId = iss.substring('https://'.length, b2cSuffixIndex > 0 ? b2cSuffixIndex : iss.length)
         }
         this.idTokenExpireOn = parseInt(decodedIdToken.exp)*1000
     }
