@@ -37,9 +37,18 @@ export default class BaseTokenItem {
         this.rawIdToken = tokenResponse.idToken
         let decodedIdToken = extractIdToken(tokenResponse.idToken)
 
-        this.userId = decodedIdToken.preferred_username || decodedIdToken.unique_name || decodedIdToken.given_name
+        this.userId = decodedIdToken.preferred_username || decodedIdToken.unique_name || decodedIdToken.sub
         this.userName = decodedIdToken.name || decodedIdToken.given_name
-        this.tenantId = decodedIdToken.tid || decodedIdToken.sub
+        if (decodedIdToken.tid) this.tenantId = decodedIdToken.tid
+        else {
+            const { iss } = decodedIdToken
+            if (iss) {
+                const httpsLength = 'https://'.length
+                const b2cSuffixIndex = iss.indexOf('.b2clogin.com')
+                // parse then tenant id out of the iss string
+                this.tenantId = iss.substring(httpsLength, b2cSuffixIndex)
+            }
+        }
         this.idTokenExpireOn = parseInt(decodedIdToken.exp)*1000
     }
 
