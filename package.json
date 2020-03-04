@@ -3,6 +3,7 @@
   "version": "1.5.1",
   "description": "An React Native module implements Azure AD V2.0 authentication flow",
   "main": "src/index.js",
+  "types": "types/index.d.ts",
   "scripts": {
     "test": "jest",
     "test:ci": "jest --coverage && codecov -t ${CODECOV_TOKEN}",
