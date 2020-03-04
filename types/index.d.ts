@@ -23,7 +23,7 @@ interface AzureAuthOptions {
 }
 
 interface ClientOptions {
-  token: string;
+  token?: string;
   authorityUrl?: string;
   baseUrl?: string;
 }
