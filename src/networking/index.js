@@ -93,7 +93,7 @@ export default class Client {
                 const blob = await response.blob()
                 return { ...payload, blob }
             } catch (err) {
-                return { ...payload, text: response.statusText };
+                return { ...payload, text: response.statusText }
             }
         } else {
             try {
