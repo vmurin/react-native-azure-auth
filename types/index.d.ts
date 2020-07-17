@@ -37,6 +37,14 @@ interface TokenResponse {
   idToken: string;
 }
 
+interface ClientResponse {
+	status:string,
+	ok: boolean,
+  headers: Headers,
+  blob?: Blob,
+  json?: object,
+  text?: string
+}
 /**
  * Helper to perform HTTP requests
  * Blob (binary) content types are not supported
@@ -66,7 +74,7 @@ declare class Client {
    * @param {String} url
    * @param {Object} [body] - request body
    */
-  request(method: string, url: string, body?: any): Promise<void>;
+  request(method: string, url: string, body?: any): Promise<ClientResponse>;
   url(path: string, query?: string): string;
 }
 
