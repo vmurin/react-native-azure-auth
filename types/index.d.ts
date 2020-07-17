@@ -53,7 +53,7 @@ interface TokenResponse {
  * @param options.token
  */
 declare class Client {
-  constructor(options: ClientOptions);
+  constructor(options?: ClientOptions);
   baseUrl: string;
   bearer: string;
   get(path: string, query: string): Promise<void>;
