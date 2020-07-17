@@ -66,7 +66,7 @@ declare class Client {
    * @param {String} url
    * @param {Object} [body] - request body
    */
-  request(method: string, url: string, body?: any): Promise<void>;
+  request(method: string, url: string, body?: any): Promise<HttpResponse>;
   url(path: string, query?: string): string;
 }
 
