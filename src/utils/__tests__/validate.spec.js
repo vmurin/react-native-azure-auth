@@ -36,6 +36,11 @@ describe('validate', () => {
         expect(() => validate(rules, values)).toThrowErrorMatchingSnapshot()
     })
 
+    it('should not fail if required boolean key equals "false"', () => {
+        const values = { state: false }
+        expect(() => validate(rules, values)).not.toThrow()
+    })
+
     it('should handle multiple parameters', () => {
         const value = {
             state: faker.random.uuid(),

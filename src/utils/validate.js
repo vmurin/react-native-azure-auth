@@ -67,10 +67,13 @@ export function validate(rules, values) {
     for (let key of Object.keys(values)) {
         let value = values[key]
         let parameterKey = aliases[key] || key
+        // this approach needed for defined boolean values with 'false'
+        // it checks for both 'null' and 'undefined'
+        let valueIsDefined = value != null
         let parameter = parameters[parameterKey]
-        if (parameter && value) {
+        if (parameter && valueIsDefined) {
             mapped[parameter.toName || parameterKey] = value
-        } else if (value && !validate) {
+        } else if (valueIsDefined && !validate) {
             mapped[key] = value
         }
     }
@@ -83,7 +86,7 @@ export function validate(rules, values) {
     if (incorrectlyTyped.length > 0) {
         throw new ParameterTypeError(typed, values, incorrectlyTyped)
     }
-    const missing = requiredKeys.filter((key) => !mapped[key])
+    const missing = requiredKeys.filter((key) => mapped[key] == null)
     if (missing.length > 0) {
         throw new ParameterError(requiredKeys, values, missing)
     }
