@@ -36,6 +36,9 @@ From version 1.1 the library uses extracted version of AsyncStorage, so you shou
 react-native link @react-native-community/async-storage
 ```
 
+**Note:** If you are using [autolinking](https://github.com/react-native-community/cli/blob/master/docs/autolinking.md) please be aware of caution to unlink the libraries in the autolinking docs. Especially if you are encountered the problem like issue [#98](https://github.com/vmurin/react-native-azure-auth/issues/98) 
+
+
 ### App Registration
 
 First, you will need to register your application with Microsoft Azure Portal. This will give you an Application ID for your application, as well as enable it to receive tokens.
