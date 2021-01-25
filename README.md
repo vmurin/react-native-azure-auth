@@ -24,17 +24,10 @@ Or via [yarn](https://yarnpkg.com/) (recommended)
 yarn add react-native-azure-auth
 ```
 
-then you need to link the native module in `react-native-azure-auth`
+Then you need to link the native modules in `react-native-azure-auth` and used AsyncStorage.
+Please check the [link](https://reactnative.dev/docs/linking-libraries-ios).
 
-```bash
-react-native link react-native-azure-auth
-```
-
-From version 1.1 the library uses extracted version of AsyncStorage, so you should link it too:
-
-```bash
-react-native link @react-native-community/async-storage
-```
+If you have used library before, it could be needed also to unlink the community version of AsyncStorage too.
 
 ### App Registration
 
