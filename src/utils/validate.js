@@ -69,7 +69,7 @@ export function validate(rules, values) {
         let parameterKey = aliases[key] || key
         // this approach needed for defined boolean values with 'false'
         // it checks for both 'null' and 'undefined'
-        let valueIsDefined = value != null
+        let valueIsDefined = value != undefined && value != null 
         let parameter = parameters[parameterKey]
         if (parameter && valueIsDefined) {
             mapped[parameter.toName || parameterKey] = value

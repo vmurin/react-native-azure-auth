@@ -1,5 +1,5 @@
 jest.mock('react-native')
-jest.mock('@react-native-community/async-storage')
+jest.mock('@react-native-async-storage/async-storage')
 import TokenCache from '../cache'
 
 const clientId = '123'
@@ -13,7 +13,7 @@ describe('token Cache', () => {
     })
 
     it('should throw error without client id', () => {
-        expect(() => { new TokenCache({wrong: '123222'})} ).toThrowError(/Missing/)
+        expect(() => { new TokenCache({wrong: '123222'})} ).toThrow(/Missing/)
     })
 
     it('should return refresh token', () => {
