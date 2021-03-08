@@ -1,7 +1,9 @@
-
 #import "AzureAuth.h"
 
 #import <SafariServices/SafariServices.h>
+#if __has_include("AuthenticationServices/AuthenticationServices.h")
+#import <AuthenticationServices/AuthenticationServices.h>
+#endif
 #import <CommonCrypto/CommonCrypto.h>
 
 #if __has_include("RCTUtils.h")
@@ -10,8 +12,20 @@
 #import <React/RCTUtils.h>
 #endif
 
+#define ERROR_CANCELLED @{@"error": @"a0.session.user_cancelled",@"error_description": @"User cancelled the Auth"}
+#define ERROR_FAILED_TO_LOAD @{@"error": @"a0.session.failed_load",@"error_description": @"Failed to load url"}
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
+@interface AzureAuth () <SFSafariViewControllerDelegate, ASWebAuthenticationPresentationContextProviding>
+@end
+#else
 @interface AzureAuth () <SFSafariViewControllerDelegate>
+@end
+#endif
+
+@interface A0Auth0 () <SFSafariViewControllerDelegate>
 @property (weak, nonatomic) SFSafariViewController *last;
+@property (strong, nonatomic) NSObject *authenticationSession;
 @property (copy, nonatomic) RCTResponseSenderBlock sessionCallback;
 @property (assign, nonatomic) BOOL closeOnLoad;
 @end
@@ -29,11 +43,14 @@ RCT_EXPORT_METHOD(hide) {
     [self terminateWithError:nil dismissing:YES animated:YES];
 }
 
-RCT_EXPORT_METHOD(showUrl:(NSString *)urlString closeOnLoad:(BOOL)closeOnLoad callback:(RCTResponseSenderBlock)callback) {
+RCT_EXPORT_METHOD(showUrl:(NSString *)urlString
+                  usingEphemeralSession:(BOOL)ephemeralSession
+                  closeOnLoad:(BOOL)closeOnLoad
+                  callback:(RCTResponseSenderBlock)callback) {
     if (@available(iOS 11.0, *)) {
         self.sessionCallback = callback;
         self.closeOnLoad = closeOnLoad;
-        [self presentAuthenticationSession:[NSURL URLWithString:urlString]];
+        [self presentAuthenticationSession:[NSURL URLWithString:urlString] usingEphemeralSession:ephemeralSession];
     } else {
         [self presentSafariWithURL:[NSURL URLWithString:urlString]];
         self.sessionCallback = callback;
@@ -54,6 +71,7 @@ RCT_EXPORT_METHOD(oauthParameters:(RCTResponseSenderBlock)callback) {
 }
 
 #pragma mark - Internal methods
+
 UIBackgroundTaskIdentifier taskId;
 
 - (void)presentSafariWithURL:(NSURL *)url {
@@ -65,8 +83,8 @@ UIBackgroundTaskIdentifier taskId;
     self.last = controller;
 }
 
-- (void)presentAuthenticationSession:(NSURL *)url {
-    
+- (void)presentAuthenticationSession:(NSURL *)url usingEphemeralSession:(BOOL)ephemeralSession {
+
     NSURLComponents *urlComponents = [NSURLComponents componentsWithURL:url
                                                 resolvingAgainstBaseURL:NO];
     NSArray *queryItems = urlComponents.queryItems;
@@ -101,6 +119,7 @@ UIBackgroundTaskIdentifier taskId;
         #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
         if (@available(iOS 13.0, *)) {
             authenticationSession.presentationContextProvider = self;
+            authenticationSession.prefersEphemeralWebBrowserSession = ephemeralSession;
         }
         #endif
         self.authenticationSession = authenticationSession;
@@ -136,11 +155,11 @@ UIBackgroundTaskIdentifier taskId;
         [self.last.presentingViewController dismissViewControllerAnimated:animated
                                                                completion:^{
                                                                    if (error) {
-                                                                       callback(@[error]);
+                                                                       callback(@[error, [NSNull null]]);
                                                                    }
                                                                }];
     } else if (error) {
-        callback(@[error]);
+        callback(@[error, [NSNull null]]);
     }
     self.sessionCallback = nil;
     self.last = nil;
@@ -157,10 +176,36 @@ UIBackgroundTaskIdentifier taskId;
     return value;
 }
 
+- (NSString *)sign:(NSString*)value {
+    CC_SHA256_CTX ctx;
+
+    uint8_t * hashBytes = malloc(CC_SHA256_DIGEST_LENGTH * sizeof(uint8_t));
+    memset(hashBytes, 0x0, CC_SHA256_DIGEST_LENGTH);
+
+    NSData *valueData = [value dataUsingEncoding:NSUTF8StringEncoding];
+
+    CC_SHA256_Init(&ctx);
+    CC_SHA256_Update(&ctx, [valueData bytes], (CC_LONG)[valueData length]);
+    CC_SHA256_Final(hashBytes, &ctx);
+
+    NSData *hash = [NSData dataWithBytes:hashBytes length:CC_SHA256_DIGEST_LENGTH];
+
+    if (hashBytes) {
+        free(hashBytes);
+    }
+
+    return [[[[hash base64EncodedStringWithOptions:0]
+              stringByReplacingOccurrencesOfString:@"+" withString:@"-"]
+             stringByReplacingOccurrencesOfString:@"/" withString:@"_"]
+            stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"="]];
+}
+
 - (NSDictionary *)generateOAuthParameters {
+    NSString *verifier = [self randomValue];
     return @{
-             @"nonce": [self randomValue],
-             @"verifier": [self randomValue],
+             @"verifier": verifier,
+             @"code_challenge": [self sign:verifier],
+             @"code_challenge_method": @"S256",
              @"state": [self randomValue]
              };
 }
@@ -168,22 +213,14 @@ UIBackgroundTaskIdentifier taskId;
 #pragma mark - SFSafariViewControllerDelegate
 
 - (void)safariViewControllerDidFinish:(SFSafariViewController *)controller {
-    NSDictionary *error = @{
-                            @"error": @"azure.session.user_cancelled",
-                            @"error_description": @"User cancelled the Authentification"
-                            };
-    [self terminateWithError:error dismissing:NO animated:NO];
+    [self terminateWithError:ERROR_CANCELLED dismissing:NO animated:NO];
 }
 
 - (void)safariViewController:(SFSafariViewController *)controller didCompleteInitialLoad:(BOOL)didLoadSuccessfully {
     if (self.closeOnLoad && didLoadSuccessfully) {
         [self terminateWithError:[NSNull null] dismissing:YES animated:YES];
     } else if (!didLoadSuccessfully) {
-        NSDictionary *error = @{
-                                @"error": @"azure.session.failed_load",
-                                @"error_description": @"Failed to load url in browser"
-                                };
-        [self terminateWithError:error dismissing:YES animated:YES];
+        [self terminateWithError:ERROR_FAILED_TO_LOAD dismissing:YES animated:YES];
     }
 }
 
@@ -203,5 +240,13 @@ UIBackgroundTaskIdentifier taskId;
         return rootViewController;
     }
 }
+
+#if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
+#pragma mark - ASWebAuthenticationPresentationContextProviding
+
+- (ASPresentationAnchor)presentationAnchorForWebAuthenticationSession:(ASWebAuthenticationSession *)session API_AVAILABLE(ios(13.0)){
+    return [UIApplication sharedApplication].keyWindow;
+}
+#endif
 
 @end
