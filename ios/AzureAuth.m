@@ -23,7 +23,7 @@
 @end
 #endif
 
-@interface A0Auth0 () <SFSafariViewControllerDelegate>
+@interface AzureAuth () <SFSafariViewControllerDelegate>
 @property (weak, nonatomic) SFSafariViewController *last;
 @property (strong, nonatomic) NSObject *authenticationSession;
 @property (copy, nonatomic) RCTResponseSenderBlock sessionCallback;
