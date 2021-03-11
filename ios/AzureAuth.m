@@ -203,6 +203,7 @@ UIBackgroundTaskIdentifier taskId;
 - (NSDictionary *)generateOAuthParameters {
     NSString *verifier = [self randomValue];
     return @{
+             @"nonce": [self randomValue],
              @"verifier": verifier,
              @"code_challenge": [self sign:verifier],
              @"code_challenge_method": @"S256",
