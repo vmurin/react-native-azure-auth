@@ -69,7 +69,7 @@ describe('Agent', () => {
             it('should remove url listeners on first load', async () => {
                 expect.assertions(1)
                 const url = 'https://login.microsoftonline.com/common/oauth2/v2.0/authorize'
-                await agent.openWeb(url, true)
+                await agent.openWeb(url, false, true)
                 expect(Linking.emitter.listenerCount('url')).toEqual(0)
             })
 

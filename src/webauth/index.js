@@ -34,6 +34,7 @@ export default class WebAuth {
    *    OpenID Connect scopes are always added to every request. `openid profile offline_access`
    *    @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes
    * @param {String} [options.prompt] (optional) indicates the type of user interaction that is required.
+   * @param {Boolean} [options.ephemeralSession] SSO. It only affects iOS with versions 13 and above.
    *    The only valid values at this time are 'login', 'none', and 'consent'.
    * @returns {Promise<BaseTokenItem | AccessTokenItem>}
    *
@@ -58,12 +59,12 @@ export default class WebAuth {
         }
         const loginUrl = this.client.loginUrl(requestParams)
 
-        let redirectUrl = await agent.openWeb(loginUrl)
+        let redirectUrl = await agent.openWeb(loginUrl, options.ephemeralSession)
 
         if (!redirectUrl || !redirectUrl.startsWith(client.redirectUri)) {
             throw new AuthError({
                 json: {
-                    error: 'a0.redirect_uri.not_expected',
+                    error: 'aa.redirect_uri.not_expected',
                     error_description: `Expected ${client.redirectUri} but got ${redirectUrl}`
                 },
                 status: 0
@@ -87,8 +88,8 @@ export default class WebAuth {
         if (resultState !== state) {
             throw new AuthError({
                 json: {
-                    error: 'a0.state.invalid',
-                    error_description: 'Invalid state recieved in redirect url'
+                    error: 'aa.state.invalid',
+                    error_description: 'Invalid state received in redirect url'
                 },
                 status: 0
             })

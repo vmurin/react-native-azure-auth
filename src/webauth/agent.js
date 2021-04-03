@@ -1,11 +1,12 @@
 import {
     NativeModules,
-    Linking
+    Linking,
+    Platform
 } from 'react-native'
 
 export default class Agent {
 
-    openWeb(url, closeOnLoad = false) {
+    openWeb(url, ephemeralSession = false, closeOnLoad = false) {
         if (!NativeModules.AzureAuth) {
             return Promise.reject(new Error('Missing NativeModule. Please make sure you run `react-native link react-native-azure-auth`'))
         }
@@ -16,8 +17,9 @@ export default class Agent {
                 Linking.removeEventListener('url', urlHandler)
                 resolve(event.url)
             }
+            const params = Platform.OS === 'ios' ? [ephemeralSession, closeOnLoad] : [closeOnLoad]
             Linking.addEventListener('url', urlHandler)
-            NativeModules.AzureAuth.showUrl(url, closeOnLoad, (err, redirectURL) => {
+            NativeModules.AzureAuth.showUrl(url, ...params, (err, redirectURL) => {
                 Linking.removeEventListener('url', urlHandler)
                 if (err) {
                     reject(err)
