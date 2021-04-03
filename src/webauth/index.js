@@ -64,7 +64,7 @@ export default class WebAuth {
         if (!redirectUrl || !redirectUrl.startsWith(client.redirectUri)) {
             throw new AuthError({
                 json: {
-                    error: 'a0.redirect_uri.not_expected',
+                    error: 'aa.redirect_uri.not_expected',
                     error_description: `Expected ${client.redirectUri} but got ${redirectUrl}`
                 },
                 status: 0
@@ -88,8 +88,8 @@ export default class WebAuth {
         if (resultState !== state) {
             throw new AuthError({
                 json: {
-                    error: 'a0.state.invalid',
-                    error_description: 'Invalid state recieved in redirect url'
+                    error: 'aa.state.invalid',
+                    error_description: 'Invalid state received in redirect url'
                 },
                 status: 0
             })

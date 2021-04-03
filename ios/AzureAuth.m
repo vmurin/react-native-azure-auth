@@ -12,8 +12,8 @@
 #import <React/RCTUtils.h>
 #endif
 
-#define ERROR_CANCELLED @{@"error": @"a0.session.user_cancelled",@"error_description": @"User cancelled the Auth"}
-#define ERROR_FAILED_TO_LOAD @{@"error": @"a0.session.failed_load",@"error_description": @"Failed to load url"}
+#define ERROR_CANCELLED @{@"error": @"aa.session.user_cancelled",@"error_description": @"User cancelled the Auth"}
+#define ERROR_FAILED_TO_LOAD @{@"error": @"aa.session.failed_load",@"error_description": @"Failed to load url"}
 
 #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
 @interface AzureAuth () <SFSafariViewControllerDelegate, ASWebAuthenticationPresentationContextProviding>
