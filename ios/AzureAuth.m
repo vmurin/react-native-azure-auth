@@ -93,6 +93,9 @@ UIBackgroundTaskIdentifier taskId;
                                   filteredArrayUsingPredicate:predicate]
                                  firstObject];
     NSString *callbackURLScheme = queryItem.value;
+    if (@available(ios 14.5, *)) {
+        callbackURLScheme = [[NSURL URLWithString: queryItem.value] scheme];
+    }
     RCTResponseSenderBlock callback = self.sessionCallback ? self.sessionCallback : ^void(NSArray *_unused) {};
 
     if (@available(iOS 12.0, *)) {
