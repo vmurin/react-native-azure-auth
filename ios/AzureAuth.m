@@ -91,7 +91,7 @@ UIBackgroundTaskIdentifier taskId;
     NSPredicate *predicate = [NSPredicate predicateWithFormat:@"name=%@", @"redirect_uri"];
     NSURLQueryItem *queryItem = [[queryItems
                                   filteredArrayUsingPredicate:predicate]
-                                 firstObject];
+                                firstObject];
     NSString *callbackURLScheme = queryItem.value;
     if (@available(ios 14.5, *)) {
         callbackURLScheme = [[NSURL URLWithString: queryItem.value] scheme];
