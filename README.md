@@ -204,7 +204,7 @@ const azureAuth = new AzureAuth({
 
 ```js
     try {
-      let tokens = await azureAuth.webAuth.authorize({scope: 'openid profile User.Read Mail.Read' })
+      let tokens = await azureAuth.webAuth.authorize({scope: 'openid profile User.Read Mail.Read',login_hint: "optionalPrefilledEmail.com" })
       this.setState({ accessToken: tokens.accessToken });
       let info = await azureAuth.auth.msGraphRequest({token: tokens.accessToken, path: '/me'})
       this.setState({ user: info.displayName, userId: tokens.userId })
