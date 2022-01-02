@@ -72,7 +72,7 @@ RCT_EXPORT_METHOD(oauthParameters:(RCTResponseSenderBlock)callback) {
 
 #pragma mark - Internal methods
 
-UIBackgroundTaskIdentifier taskId;
+UIBackgroundTaskIdentifier aaBackgroundTaskId;
 
 - (void)presentSafariWithURL:(NSURL *)url {
     UIWindow *window = [[UIApplication sharedApplication] keyWindow];
@@ -99,9 +99,9 @@ UIBackgroundTaskIdentifier taskId;
     RCTResponseSenderBlock callback = self.sessionCallback ? self.sessionCallback : ^void(NSArray *_unused) {};
 
     if (@available(iOS 12.0, *)) {
-        taskId = [UIApplication.sharedApplication beginBackgroundTaskWithExpirationHandler:^{
-            [UIApplication.sharedApplication endBackgroundTask:taskId];
-            taskId = UIBackgroundTaskInvalid;
+        aaBackgroundTaskId = [UIApplication.sharedApplication beginBackgroundTaskWithExpirationHandler:^{
+            [UIApplication.sharedApplication endBackgroundTask:aaBackgroundTaskId];
+            aaBackgroundTaskId = UIBackgroundTaskInvalid;
         }];        
         ASWebAuthenticationSession* authenticationSession = [[ASWebAuthenticationSession alloc]
                                       initWithURL:url callbackURLScheme:callbackURLScheme
@@ -116,8 +116,8 @@ UIBackgroundTaskIdentifier taskId;
                                               callback(@[[NSNull null], callbackURL.absoluteString]);
                                           }
                                           self.authenticationSession = nil;
-                                          [UIApplication.sharedApplication endBackgroundTask:taskId];
-                                          taskId = UIBackgroundTaskInvalid;                                          
+                                          [UIApplication.sharedApplication endBackgroundTask:aaBackgroundTaskId];
+                                          aaBackgroundTaskId = UIBackgroundTaskInvalid;                                          
                                       }];
         #if __IPHONE_OS_VERSION_MAX_ALLOWED >= 130000
         if (@available(iOS 13.0, *)) {
@@ -128,9 +128,9 @@ UIBackgroundTaskIdentifier taskId;
         self.authenticationSession = authenticationSession;
         [(ASWebAuthenticationSession*) self.authenticationSession start];
     } else if (@available(iOS 11.0, *)) {
-	    taskId = [UIApplication.sharedApplication beginBackgroundTaskWithExpirationHandler:^{
-            [UIApplication.sharedApplication endBackgroundTask:taskId];
-            taskId = UIBackgroundTaskInvalid;
+	    aaBackgroundTaskId = [UIApplication.sharedApplication beginBackgroundTaskWithExpirationHandler:^{
+            [UIApplication.sharedApplication endBackgroundTask:aaBackgroundTaskId];
+            aaBackgroundTaskId = UIBackgroundTaskInvalid;
         }];        
         self.authenticationSession = [[SFAuthenticationSession alloc]
                                       initWithURL:url callbackURLScheme:callbackURLScheme
@@ -145,8 +145,8 @@ UIBackgroundTaskIdentifier taskId;
                                               callback(@[[NSNull null], callbackURL.absoluteString]);
                                           }
                                           self.authenticationSession = nil;
-                                          [UIApplication.sharedApplication endBackgroundTask:taskId];
-                                          taskId = UIBackgroundTaskInvalid;                                          
+                                          [UIApplication.sharedApplication endBackgroundTask:aaBackgroundTaskId];
+                                          aaBackgroundTaskId = UIBackgroundTaskInvalid;                                          
                                       }];
         [(SFAuthenticationSession*) self.authenticationSession start];
     }
