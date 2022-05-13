@@ -6,11 +6,7 @@
 #endif
 #import <CommonCrypto/CommonCrypto.h>
 
-#if __has_include("RCTUtils.h")
-#import "RCTUtils.h"
-#else
 #import <React/RCTUtils.h>
-#endif
 
 #define ERROR_CANCELLED @{@"error": @"aa.session.user_cancelled",@"error_description": @"User cancelled the Auth"}
 #define ERROR_FAILED_TO_LOAD @{@"error": @"aa.session.failed_load",@"error_description": @"Failed to load url"}
