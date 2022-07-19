@@ -117,21 +117,24 @@ export default class WebAuth {
    *  Removes Azure session
    *
    * @param {Object} options parameters to send
-   * @param {Boolean} [options.closeOnLoad] close browser window on 'Loaded' event (works only on iOS)
+   * @param {Boolean} [options.ephemeralSession=true] whether to use ephemeral session or not
+   * @param {Boolean} [options.closeOnLoad=true] close browser window on 'Loaded' event (works only on iOS)
    * @returns {Promise}
    *
    * @memberof WebAuth
    */
-    clearSession(options = {closeOnLoad: true}) {
+     clearSession({ephemeralSession = true, closeOnLoad = true} = {}) {
+        const options = { ephemeralSession, closeOnLoad };
         const { client, agent } = this
         const parsedOptions = validate({
             parameters: {
+                ephemeralSession: { required: true },
                 closeOnLoad: { required: true },
             },
             validate: true // not declared params are NOT allowed:
         }, options)
 
         const logoutUrl = client.logoutUrl()
-        return agent.openWeb(logoutUrl, parsedOptions.closeOnLoad)
+        return agent.openWeb(logoutUrl, parsedOptions.ephemeralSession, parsedOptions.closeOnLoad)
     }
 }

@@ -312,9 +312,10 @@ declare class WebAuth {
    *  Removes Azure session
    *
    * @param {Object} options parameters to send
-   * @param {Boolean} [options.closeOnLoad] close browser window on 'Loaded' event (works only on iOS)
+   * @param {Boolean} [options.ephemeralSession=true] whether to use ephemeral session or not
+   * @param {Boolean} [options.closeOnLoad=true] close browser window on 'Loaded' event (works only on iOS)
    */
-  clearSession(options?: { closeOnLoad: boolean }): Promise<void>;
+  clearSession(options?: { ephemereSession: boolean, closeOnLoad: boolean }): Promise<void>;
 }
 
 declare class AzureAuth {
