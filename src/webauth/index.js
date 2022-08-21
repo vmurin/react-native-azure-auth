@@ -132,6 +132,6 @@ export default class WebAuth {
         }, options)
 
         const logoutUrl = client.logoutUrl()
-        return agent.openWeb(logoutUrl, parsedOptions.closeOnLoad)
+        return agent.openWeb(logoutUrl, false, parsedOptions.closeOnLoad)
     }
 }
