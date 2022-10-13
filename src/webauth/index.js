@@ -34,8 +34,9 @@ export default class WebAuth {
    *    OpenID Connect scopes are always added to every request. `openid profile offline_access`
    *    @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes
    * @param {String} [options.prompt] (optional) indicates the type of user interaction that is required.
+   *    The only valid values are 'login', 'none', 'consent', and 'select_account'.
+   *    @see https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow
    * @param {Boolean} [options.ephemeralSession] SSO. It only affects iOS with versions 13 and above.
-   *    The only valid values at this time are 'login', 'none', and 'consent'.
    * @returns {Promise<BaseTokenItem | AccessTokenItem>}
    *
    * @memberof WebAuth
