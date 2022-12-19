@@ -240,7 +240,7 @@ If you have found a bug or if you have a feature request, please report them at 
 
 ## Author
 
-[Vladimir Murin](https://github.com/vmurin)
+[Vlad Murin](https://github.com/vmurin)
 
 ## Credits
 
