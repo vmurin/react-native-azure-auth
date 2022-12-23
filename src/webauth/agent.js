@@ -12,21 +12,33 @@ export default class Agent {
         }
 
         return new Promise((resolve, reject) => {
-            const urlHandler = (event) => {
+            let eventURL
+            const removeListener = () => {
+                //This is done to handle backward compatibility with RN <= 0.64 which doesn't return EmitterSubscription on addEventListener
+                if (eventURL === undefined) {
+                    Linking.removeEventListener('url', urlHandler)
+                } else {
+                    eventURL.remove()
+                }
+            }
+            const urlHandler = event => {
                 NativeModules.AzureAuth.hide()
-                Linking.removeEventListener('url', urlHandler)
+                removeListener()
                 resolve(event.url)
             }
-            const params = Platform.OS === 'ios' ? [ephemeralSession, closeOnLoad] : [closeOnLoad]
-            Linking.addEventListener('url', urlHandler)
-            NativeModules.AzureAuth.showUrl(url, ...params, (err, redirectURL) => {
-                Linking.removeEventListener('url', urlHandler)
-                if (err) {
-                    reject(err)
-                } else if(redirectURL) {
+            const params =
+              Platform.OS === 'ios' ? [ephemeralSession, closeOnLoad] : [closeOnLoad]
+            eventURL = Linking.addEventListener('url', urlHandler)
+            NativeModules.AzureAuth.showUrl(url, ...params, (error, redirectURL) => {
+                removeListener()
+                if (error) {
+                    reject(error)
+                } else if (redirectURL) {
                     resolve(redirectURL)
                 } else if (closeOnLoad) {
                     resolve()
+                } else {
+                    reject(new Error('Unknown WebAuth error'))
                 }
             })
         })
