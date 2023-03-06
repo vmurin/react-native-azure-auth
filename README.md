@@ -81,6 +81,11 @@ scheme = alpha *( alpha | digit | "+" | "-" | "." )
 
 As you can see, allowed in identifier and package name underscore (`_`) character is NOT allowed in the URI scheme!
 
+##### Custom redirect URI
+
+You are free to use any custom URI taking into account restrictions stated above. Just add `redirectUri:` parameter to the `AzureAuth` initialization call.
+See the [docs](https://vmurin.github.io/react-native-azure-auth/AzureAuth.html) and [Usage](#usage) section.
+
 ### App Configuration
 
 #### Android config
