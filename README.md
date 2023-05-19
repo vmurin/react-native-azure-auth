@@ -86,6 +86,17 @@ As you can see, allowed in identifier and package name underscore (`_`) characte
 You are free to use any custom URI taking into account restrictions stated above. Just add `redirectUri:` parameter to the `AzureAuth` initialization call.
 See the [docs](https://vmurin.github.io/react-native-azure-auth/AzureAuth.html) and [Usage](#usage) section.
 
+##### Single tenant app registration
+
+To be able to use this app type you should add `tenant` property in the `AzureAuth` init options like this:
+
+```javascript
+const azureAuth = new AzureAuth({
+    clientId: YOUR_CLIENT_ID,
+    tenant: 'XXXXXXXX-YYYY-ZZZZ-AAAA-BBBBBBBBBBBB', // your app tenant ID
+  });
+```
+
 ### App Configuration
 
 #### Android config
