@@ -47,10 +47,8 @@ describe('auth', () => {
     const auth  = new Auth({authorityUrl, clientId})
 
     beforeEach(() => {
-        beforeEach(() => {
-            NativeModules.AzureAuth = AzureAuth
-            AzureAuth.reset()
-        })
+        NativeModules.AzureAuth = AzureAuth
+        AzureAuth.reset()
         fetchMock.restore()
     })
 
