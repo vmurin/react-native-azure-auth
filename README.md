@@ -1,5 +1,6 @@
 # react-native-azure-auth
 
+[![Maintainers Wanted](https://img.shields.io/badge/maintainers-wanted-red.svg)](https://github.com/pickhardt/maintainers-wanted)
 [![CircleCI](https://circleci.com/gh/vmurin/react-native-azure-auth.svg?style=svg)](https://circleci.com/gh/vmurin/react-native-azure-auth)
 
 React Native library implementing Azure AD OAuth2 API
@@ -9,6 +10,14 @@ The library uses the latest __V2.0__ version of the [Azure AD endponts](https://
 The OpenID connect and `autorization_code` grant are implemented.
 
 JS Docs can be accesed under <https://vmurin.github.io/react-native-azure-auth/>
+
+## Maintainers/Developers wanted
+
+**ATTENTION!**  react-native-azure-auth project is looking for maintainers and contributors!
+For various reasons, I can only keep maintaining this project as far as dependency bumps and publishing.
+As for new features and the bug/issue support, these will require other maintainers/contributors.
+
+If that's you - please feel free to ping me and I will add you to contributors of this repo with according rights.
 
 ## Installation
 
