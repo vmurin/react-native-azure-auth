@@ -61,8 +61,17 @@ First, you will need to register your application with Microsoft Azure Portal. T
 1. Find the _Application (client) ID_ value in **Overview** section, copy and save the value in a safe location.
 1. You don't need to set _API Permissions_. It is meant for admin consent only.
 1. Now select **Authentication** from the left menu
-1. Select checkbox **ID tokens** in the _Implicit grant_ section - it is needed for OpenID Connect. The library will still use authorization grant and not imlicit.
+1. Select checkbox **ID tokens**[^implicitgrantnote] in the _Implicit grant_ section - it is needed for OpenID Connect. The library will still use authorization grant and not implicit.
 1. Click **Save** button above to save changes.
+
+[^implicitgrantnote]: This checkbox [might not exist (anymore)](https://github.com/vmurin/react-native-azure-auth/issues/174). 
+
+    If this is the case, go to **Manifest** and set the following values to true:
+
+    ```json
+    "oauth2AllowIdTokenImplicitFlow": true,
+    "oauth2AllowImplicitFlow": true,
+    ```
 
 #### Callback URL(s)
 
