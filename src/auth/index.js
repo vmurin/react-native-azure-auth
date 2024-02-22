@@ -108,20 +108,21 @@ export default class Auth {
    * @memberof Auth
    */
     exchange(input = {}) {
+        const {authorityUrl, ...restInput} = input;
         const payload = validate({
             parameters: {
                 code: { required: true },
                 scope: { required: true },
                 code_verifier: { required: true },
             }
-        }, input)
+        }, restInput)
 
         return this.client
             .post('token',
                 {...payload,
                     client_id: this.clientId,
                     redirect_uri: this.redirectUri,
-                    grant_type: 'authorization_code'})
+                    grant_type: 'authorization_code'}, authorityUrl)
             .then(responseHandler)
     }
 

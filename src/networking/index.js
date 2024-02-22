@@ -38,8 +38,8 @@ export default class Client {
         }
     }
 
-    post(path, body) {
-        let url = this.url(path)
+    post(path, body, authorityUrl) {
+        let url = this.url(path, null, authorityUrl)
         return this.request('POST', url, body)
     }
 

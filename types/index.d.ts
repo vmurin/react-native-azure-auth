@@ -66,7 +66,7 @@ declare class Client {
   bearer: string;
   get(path: string, query: string): Promise<void>;
   patch(path: string, body: any): Promise<void>;
-  post(path: string, body: any): Promise<void>;
+  post(path: string, body: any, authorityUrl?: string): Promise<void>;
   /**
    * Helper function to send HTTP requests
    *
@@ -75,7 +75,7 @@ declare class Client {
    * @param {Object} [body] - request body
    */
   request(method: string, url: string, body?: any): Promise<ClientResponse>;
-  url(path: string, query?: string): string;
+  url(path: string, query?: string, authorityUrl?: string): string;
 }
 
 /**
@@ -232,6 +232,7 @@ declare class Auth {
     code: string;
     redirectUri: string;
     scope: string;
+    authorityUrl?: string;
   }): Promise<void>;
   /**
    * Builds the full authorize endpoint url in the Authorization Server (AS) with given parameters.

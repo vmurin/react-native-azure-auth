@@ -43,7 +43,7 @@ export default class WebAuth {
    * @memberof WebAuth
    */
     async authorize(options = {}) {
-        const scope = new Scope(options.scope)
+                const scope = new Scope(options.scope)
 
         const { clientId, client, agent } = this
         const {nonce, state, verifier} = await agent.generateRequestParams()
@@ -99,7 +99,8 @@ export default class WebAuth {
         const tokenResponse = await client.exchange({
             code,
             scope: scope.toString(),
-            code_verifier: verifier
+            code_verifier: verifier,
+            authorityUrl: options?.authorityUrl
         })
 
         if (tokenResponse.refreshToken) {
