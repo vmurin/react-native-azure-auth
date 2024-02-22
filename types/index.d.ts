@@ -307,6 +307,7 @@ declare class WebAuth {
   authorize(options: {
     prompt?: string;
     scope?: string;
+    authorityUrl?: string;
   }): Promise<BaseTokenItem & Partial<AccessTokenItem>>;
   /**
    *  Removes Azure session

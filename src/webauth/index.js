@@ -37,6 +37,7 @@ export default class WebAuth {
    *    The only valid values are 'login', 'none', 'consent', and 'select_account'.
    *    @see https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow
    * @param {Boolean} [options.ephemeralSession] SSO. It only affects iOS with versions 13 and above.
+   * @param {String} options.authorityUrl (optional)the authorityUrl for signup or other flows directly
    * @returns {Promise<BaseTokenItem | AccessTokenItem>}
    *
    * @memberof WebAuth
