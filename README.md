@@ -127,7 +127,8 @@ In the file `android/app/src/main/AndroidManifest.xml` you must make sure the **
     <category android:name="android.intent.category.DEFAULT" />
     <category android:name="android.intent.category.BROWSABLE" />
     <data
-        android:pathPrefix="/${applicationId}/android/callback"
+        android:pathPrefix="/android/callback"
+        android:host="${applicationId}"
         android:scheme="${applicationId}" />
 </intent-filter>
 ```
