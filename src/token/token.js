@@ -1,4 +1,4 @@
-import {jwtDecode} from 'jwt-decode'
+import { jwtDecode } from 'jwt-decode'
 
 /**
  * Decode ID token from
@@ -7,7 +7,7 @@ import {jwtDecode} from 'jwt-decode'
  * @returns {Object | null} - in case of error null is returned
  */
 
-import { decode } from 'js-base64'
+import { decode } from 'base-64'
 
 // overwrite global implementation
 global.atob = decode

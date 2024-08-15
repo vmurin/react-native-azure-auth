@@ -51,6 +51,7 @@
   "dependencies": {
     "@babel/runtime": "^7.24.7",
     "@react-native-async-storage/async-storage": "^1.23.1",
+    "base-64": "^1.0.0",
     "js-base64": "^3.7.7",
     "jwt-decode": "^4.0.0",
     "url": "^0.11.3"
