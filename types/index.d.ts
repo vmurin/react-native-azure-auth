@@ -66,7 +66,7 @@ declare class Client {
   bearer: string;
   get(path: string, query: string): Promise<void>;
   patch(path: string, body: any): Promise<void>;
-  post(path: string, body: any): Promise<void>;
+  post(path: string, body: any, authorityUrl?: string): Promise<void>;
   /**
    * Helper function to send HTTP requests
    *
@@ -75,7 +75,7 @@ declare class Client {
    * @param {Object} [body] - request body
    */
   request(method: string, url: string, body?: any): Promise<ClientResponse>;
-  url(path: string, query?: string): string;
+  url(path: string, query?: string, authorityUrl?: string): string;
 }
 
 /**
@@ -224,6 +224,7 @@ declare class Auth {
    * @param {String} input.code code returned by `/authorize`.
    * @param {String} input.redirectUri original redirectUri used when calling `/authorize`.
    * @param {String} input.scope A space-separated list of scopes.
+   * @param {String} input.authorityUrl A space-separated list of scopes.
    *    The scopes requested in this leg must be equivalent to or a subset of the scopes requested in the first leg
    *
    * @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-protocols-oauth-code#request-an-access-token
@@ -232,6 +233,7 @@ declare class Auth {
     code: string;
     redirectUri: string;
     scope: string;
+    authorityUrl?: string;
   }): Promise<void>;
   /**
    * Builds the full authorize endpoint url in the Authorization Server (AS) with given parameters.
@@ -307,6 +309,7 @@ declare class WebAuth {
   authorize(options: {
     prompt?: string;
     scope?: string;
+    authorityUrl?: string;
   }): Promise<BaseTokenItem & Partial<AccessTokenItem>>;
   /**
    *  Removes Azure session
