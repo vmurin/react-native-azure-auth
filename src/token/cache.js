@@ -4,8 +4,6 @@ import AccessTokenItem from './accessTokenItem'
 import RefreshTokenItem from './refreshTokenItem'
 import BaseTokenItem from './baseTokenItem'
 
-let _instance = null
-
 /**
  * Token persistent cache
  *
@@ -20,24 +18,25 @@ let _instance = null
  * @memberof TokenCache
  */
 export default class TokenCache {
+    static _instance
     constructor(input = {}) {
         // for better testability check params first
         const params = validate({
             parameters: {
                 clientId: { required: true },
-                persistent: { required: false },
+                persistent: { required: false, type: 'boolean' },
             }
         }, input)
 
-        if (_instance) {
-            return _instance
+        if (TokenCache._instance) {
+            return TokenCache._instance
         }
 
         this.cache = {}
         this.clientId = params.clientId
-        this.persistent = params.persistent || true // by default enabled
+        this.persistent = params.persistent != null ? params.persistent : true // by default enabled
 
-        _instance = this
+        TokenCache._instance = this
     }
 
     async saveAccessToken(tokenResponse) {
