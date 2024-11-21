@@ -7,8 +7,8 @@ interface AuthOptions {
 interface AzureAuthOptions {
   /** @param {String} clientId your AzureAuth client identifier */
   clientId: string;
-  /** @param {boolean} [persistentCache] should store token cache between the app starts; defaults to true */
-  persistentCache?: string;
+  /** @param {Boolean} [persistentCache] should store token cache between the app starts; defaults to true */
+  persistentCache?: boolean;
   /** @param {String} [authorityUrl] optional Azure authority if you want to replace default v2 endpoint (`https://login.microsoftonline.com/${tenant}/oauth2/v2.0/`) */
   authorityUrl?: string;
   /** @param {String} [tenant] uses given tenant in the default authority URL; default is `common` */
