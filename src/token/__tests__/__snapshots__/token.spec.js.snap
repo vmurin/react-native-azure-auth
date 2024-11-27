@@ -1,7 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`token actions should correctly extract Id token 1`] = `
-Object {
+{
   "aio": "ATQAy/8GAAAAVFpo9Rc4ClmmrPaZqzxM9/gbFohf8FNd/p6MxJF5IL99OlGDDy1Ys+PyizDi8csm",
   "aud": "b5d120f6-04fb-481a-88f6-bc2dfd44fda7",
   "exp": 1520528361,

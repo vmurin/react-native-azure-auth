@@ -128,11 +128,12 @@ In the file `android/app/src/main/AndroidManifest.xml` you must make sure the **
     <category android:name="android.intent.category.BROWSABLE" />
     <data
         android:pathPrefix="/${applicationId}/android/callback"
+        android:host="${applicationId}"
         android:scheme="${applicationId}" />
 </intent-filter>
 ```
 
-The `applicationId` here should be the same as your app package name, and not the ID from MS App Portal.
+The `applicationId` here should be the same as your app **package name**, and not the ID from MS App Portal.
 
 You would have the following **MainActivity**  configuration:
 
@@ -152,7 +153,7 @@ android:windowSoftInputMode="adjustResize">
     <category android:name="android.intent.category.DEFAULT" />
     <category android:name="android.intent.category.BROWSABLE" />
     <data
-        android:pathPrefix="/android/callback"
+        android:pathPrefix="/${applicationId}/android/callback"
         android:host="${applicationId}"
         android:scheme="${applicationId}" />
 </intent-filter>

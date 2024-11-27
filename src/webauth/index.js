@@ -74,7 +74,13 @@ export default class WebAuth {
 
         // Response is returned in hash, but we want to get parsed object
         // Query can be parsed, therefore lets replace hash sign with '?' mark
-        redirectUrl = redirectUrl.replace('#','?') // replace only first one
+        const queryCheck = /\?.*#/; 
+        if(queryCheck.test(redirectUrl)){
+            // If there is already a query string, replace hash with '&' to append to query
+            redirectUrl = redirectUrl.replace('#','&')
+        }else{
+            redirectUrl = redirectUrl.replace('#','?')
+        }
         const urlHashParsed = url.parse(redirectUrl, true).query
         const {
             code,

@@ -5,7 +5,7 @@ exports[`auth code exchange should handle oauth error 1`] = `[invalid_request: I
 exports[`auth code exchange should handle unexpected error 1`] = `[aad.response.invalid: Internal Server Error]`;
 
 exports[`auth code exchange should return successful response 1`] = `
-Object {
+{
   "accessToken": "an access token",
   "expiresIn": 1234567890,
   "idToken": "an id token",
@@ -15,11 +15,11 @@ Object {
 `;
 
 exports[`auth code exchange should send correct payload 1`] = `
-Array [
+[
   "https://login.microsoftonline.com/common/oauth2/v2.0/token",
-  Object {
+  {
     "body": "&code=a%20code&code_verifier=some%20Azure%20verifier%20code&scope=openid&client_id=A_CLIENT_ID_OF_YOUR_ACCOUNT&redirect_uri=my_bundle_id%3A%2F%2Fmy_bundle_id%2FSomeMobile%2Fcallback&grant_type=authorization_code",
-    "headers": Object {
+    "headers": {
       "Accept": "application/json, image/*;q=0.1",
       "Content-Length": 211,
       "Content-Type": "application/x-www-form-urlencoded",
@@ -34,9 +34,9 @@ exports[`auth constructor should fail without authority 1`] = `"Missing Azure au
 exports[`auth constructor should fail without clientId 1`] = `"Missing clientId in parameters"`;
 
 exports[`auth graph requests should return blob 1`] = `
-Object {
-  "blob": Object {},
-  "headers": Object {
+{
+  "blob": {},
+  "headers": {
     "Content-Type": "image/png",
   },
   "status": 200,
@@ -58,7 +58,7 @@ exports[`auth refresh token should handle oauth error 1`] = `null`;
 exports[`auth refresh token should handle unexpected error 1`] = `null`;
 
 exports[`auth refresh token should return successful response 1`] = `
-Object {
+{
   "accessToken": "an access token",
   "expiresIn": 1234567890,
   "idToken": "an id token",
@@ -68,11 +68,11 @@ Object {
 `;
 
 exports[`auth refresh token should send correct payload 1`] = `
-Array [
+[
   "https://login.microsoftonline.com/common/oauth2/v2.0/token",
-  Object {
+  {
     "body": "&refresh_token=a%20refresh%20token%20of%20a%20user&scope=offline_access%20openid%20profile&client_id=A_CLIENT_ID_OF_YOUR_ACCOUNT&grant_type=refresh_token&redirect_uri=my_bundle_id%3A%2F%2Fmy_bundle_id%2FSomeMobile%2Fcallback",
-    "headers": Object {
+    "headers": {
       "Accept": "application/json, image/*;q=0.1",
       "Content-Length": 224,
       "Content-Type": "application/x-www-form-urlencoded",
