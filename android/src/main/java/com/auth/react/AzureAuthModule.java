@@ -62,8 +62,8 @@ public class AzureAuthModule extends ReactContextBaseJavaModule implements Lifec
                 CustomTabsIntent customTabsIntent = builder.build();
                 customTabsIntent.launchUrl(activity, Uri.parse(url));
             } catch (ActivityNotFoundException e) {
-                // No chrome installed on device
-                startNewBrowserActivity(url);
+                // No browser available to handle CustomTabs
+                handleNoBrowserError(url, e);
             }
         } else {
             startNewBrowserActivity(url);
@@ -74,7 +74,26 @@ public class AzureAuthModule extends ReactContextBaseJavaModule implements Lifec
         final Intent intent = new Intent(Intent.ACTION_VIEW);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setData(Uri.parse(url));
-        getReactApplicationContext().startActivity(intent);
+        try {
+            getReactApplicationContext().startActivity(intent);
+        } catch (ActivityNotFoundException e) {
+            handleNoBrowserError(url, e);
+        }
+    }
+
+    private void handleNoBrowserError(String url, ActivityNotFoundException e) {
+        e.printStackTrace(); // Log for debugging
+
+        // error response to send back to React Native
+        WritableMap error = Arguments.createMap();
+        error.putString("error", "no_browser_found");
+        error.putString("error_description", "No browser found to handle the authentication request. URL: " + url);
+
+        // Invoke callback with the error if available
+        if (this.callback != null) {
+            this.callback.invoke(error);
+            this.callback = null;
+        }
     }
 
     @ReactMethod
@@ -85,7 +104,7 @@ public class AzureAuthModule extends ReactContextBaseJavaModule implements Lifec
         parameters.putString("verifier", this.generateRandomValue());
         callback.invoke(parameters);
     }
-   
+
     @ReactMethod
     public void hide() {
         AzureAuthModule.this.callback = null;
