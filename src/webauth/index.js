@@ -37,6 +37,9 @@ export default class WebAuth {
    *    The only valid values are 'login', 'none', 'consent', and 'select_account'.
    *    @see https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow
    * @param {Boolean} [options.ephemeralSession] SSO. It only affects iOS with versions 13 and above.
+   * @param {String} [options.login_hint] (optional). Provides a hint to Microsoft Entra ID 
+   *    about the user account attempting to sign in
+   *    @see https://learn.microsoft.com/en-us/entra/identity-platform/msal-js-sso#using-a-login-hint
    * @returns {Promise<BaseTokenItem | AccessTokenItem>}
    *
    * @memberof WebAuth
