@@ -36,6 +36,6 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    implementation 'com.android.support:customtabs:+'
+    implementation 'androidx.browser:browser:+'
 }
 
