@@ -303,10 +303,14 @@ declare class WebAuth {
    *    @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes
    * @param {String} [options.prompt] (optional) indicates the type of user interaction that is required.
    *    The only valid values at this time are 'login', 'none', and 'consent'.
+  * @param {String} [options.login_hint] (optional). Provides a hint to Microsoft Entra ID 
+   *    about the user account attempting to sign in
+   *    @see https://learn.microsoft.com/en-us/entra/identity-platform/msal-js-sso#using-a-login-hint 
    */
   authorize(options: {
     prompt?: string;
     scope?: string;
+    login_hint?: string;
   }): Promise<BaseTokenItem & Partial<AccessTokenItem>>;
   /**
    *  Removes Azure session
