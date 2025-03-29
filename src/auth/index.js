@@ -54,6 +54,7 @@ export default class Auth {
    * @param {String} parameters.scope a space-separated list of scopes that you want the user to consent to.
    * @param {String} parameters.prompt (optional) indicates the type of user interaction that is required.
    *    The only valid values at this time are 'login', 'none', and 'consent'.
+   * @param {String} parameters.authorityUrl (optional)the authorityUrl for signup or other flows directly
    * @returns {String} authorize url with specified parameters to redirect to for AuthZ/AuthN.
    *
    * @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-protocols-oauth-code
@@ -61,6 +62,7 @@ export default class Auth {
    * @memberof Auth
    */
     loginUrl(parameters = {}) {
+        const {authorityUrl, ...restParameters} = parameters;
         const query = validate({
             parameters: {
                 responseType: { required: true, toName: 'response_type' },
@@ -69,12 +71,12 @@ export default class Auth {
                 prompt: {}
             },
             validate: false // not declared params are allowed:
-        }, parameters)
+        }, restParameters)
         return this.client.url('authorize',
             {...query,
                 client_id: this.clientId,
                 redirect_uri: this.redirectUri
-            })
+            }, authorityUrl)
     }
 
     /**
@@ -99,6 +101,7 @@ export default class Auth {
    * @param {String} input.code code returned by `/authorize`.
    * @param {String} input.redirectUri original redirectUri used when calling `/authorize`.
    * @param {String} input.scope A space-separated list of scopes.
+   * @param {String} input.authorityUrl A space-separated list of scopes.
    *    The scopes requested in this leg must be equivalent to or a subset of the scopes requested in the first leg
    * @returns {Promise}
    * @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-protocols-oauth-code#request-an-access-token
@@ -106,20 +109,21 @@ export default class Auth {
    * @memberof Auth
    */
     exchange(input = {}) {
+        const {authorityUrl, ...restInput} = input;
         const payload = validate({
             parameters: {
                 code: { required: true },
                 scope: { required: true },
                 code_verifier: { required: true },
             }
-        }, input)
+        }, restInput)
 
         return this.client
             .post('token',
                 {...payload,
                     client_id: this.clientId,
                     redirect_uri: this.redirectUri,
-                    grant_type: 'authorization_code'})
+                    grant_type: 'authorization_code'}, authorityUrl)
             .then(responseHandler)
     }
 

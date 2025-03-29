@@ -38,8 +38,8 @@ export default class Client {
         }
     }
 
-    post(path, body) {
-        let url = this.url(path)
+    post(path, body, authorityUrl) {
+        let url = this.url(path, null, authorityUrl)
         return this.request('POST', url, body)
     }
 
@@ -51,8 +51,9 @@ export default class Client {
         return this.request('GET', this.url(path, query))
     }
 
-    url(path, query) {
-        let endpoint = url.resolve(this.baseUrl, path)
+    url(path, query, authorityUrl) {
+        const baseAuthorityUrl = authorityUrl ? `https://${authorityUrl}`: this.baseUrl;
+        let endpoint = url.resolve(baseAuthorityUrl, path)
         if (query && query.length !== 0) {
             const parsed = url.parse(endpoint)
             parsed.query = query || {}
