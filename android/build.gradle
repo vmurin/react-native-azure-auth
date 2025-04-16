@@ -36,6 +36,8 @@ repositories {
 
 dependencies {
     implementation 'com.facebook.react:react-native:+'
-    implementation 'androidx.browser:browser:+'
+    def androidXVersion = safeExtGet('androidXVersion', '+')
+    def androidXBrowser = safeExtGet('androidXBrowser', androidXVersion)
+    implementation "androidx.browser:browser:$androidXBrowser"
 }
 
