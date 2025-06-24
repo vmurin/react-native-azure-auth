@@ -158,7 +158,8 @@ export default class Auth {
                     // on missing consent Azure also answers with HTTP 400 code
                     // Error: AADSTS65001, response.json.error_codes[0] == 65001
                     log.error('Could not refresh token: ', response)
-                    return Promise.reject(null)
+                    const error = new AuthError(response)
+                    return Promise.reject(error)
                 }
             })
     }
