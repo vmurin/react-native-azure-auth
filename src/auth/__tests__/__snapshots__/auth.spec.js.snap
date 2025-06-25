@@ -53,9 +53,9 @@ exports[`auth logoutUrl should return logout url with extra parameters 1`] = `"h
 
 exports[`auth logoutUrl should return logout url with skipping unknown parameters 1`] = `"https://login.microsoftonline.com/common/oauth2/v2.0/logout?post_logout_redirect_uri=my_bundle_id%3A%2F%2Fmy_bundle_id%2FSomeMobile%2Fcallback&redirect_uri=my_bundle_id%3A%2F%2Fmy_bundle_id%2FSomeMobile%2Fcallback"`;
 
-exports[`auth refresh token should handle oauth error 1`] = `null`;
+exports[`auth refresh token should handle oauth error 1`] = `[invalid_request: Invalid grant]`;
 
-exports[`auth refresh token should handle unexpected error 1`] = `null`;
+exports[`auth refresh token should handle unexpected error 1`] = `[aad.response.invalid: Internal Server Error]`;
 
 exports[`auth refresh token should return successful response 1`] = `
 {
