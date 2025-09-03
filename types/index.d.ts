@@ -232,7 +232,6 @@ declare class Auth {
     code: string;
     redirectUri: string;
     scope: string;
-    extraQueryParameters?: Record<string, string | number>;
   }): Promise<void>;
   /**
    * Builds the full authorize endpoint url in the Authorization Server (AS) with given parameters.
@@ -254,7 +253,6 @@ declare class Auth {
     state: string;
     scope: string;
     prompt?: string;
-    extraQueryParameters?: Record<string, string | number>;
   }): string;
   /**
    * Builds the full logout endpoint url in the Authorization Server (AS) with given parameters.
@@ -314,7 +312,6 @@ declare class WebAuth {
     prompt?: string;
     scope?: string;
     login_hint?: string;
-    extraQueryParameters?: Record<string, string | number>;
   }): Promise<BaseTokenItem & Partial<AccessTokenItem>>;
   /**
    *  Removes Azure session
