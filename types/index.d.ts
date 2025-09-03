@@ -312,6 +312,7 @@ declare class WebAuth {
     prompt?: string;
     scope?: string;
     login_hint?: string;
+    extraQueryParameters?: Record<string, string | number>;
   }): Promise<BaseTokenItem & Partial<AccessTokenItem>>;
   /**
    *  Removes Azure session
