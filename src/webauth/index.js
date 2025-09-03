@@ -29,18 +29,20 @@ export default class WebAuth {
    *
    * In iOS it will use `SFSafariViewController` and in Android `Chrome Custom Tabs`.
    *
-   * @param {Object} options parameters to send
-   * @param {String} [options.scope] scopes requested for the issued tokens.
+   * @param {Object} options Parameters to send
+   * @param {String} [options.scope] Scopes requested for the issued tokens.
    *    OpenID Connect scopes are always added to every request. `openid profile offline_access`
-   *    @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes
-   * @param {String} [options.prompt] (optional) indicates the type of user interaction that is required.
+   * @param {String} [options.prompt] (optional) Indicates the type of user interaction that is required.
    *    The only valid values are 'login', 'none', 'consent', and 'select_account'.
-   *    @see https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow
    * @param {Boolean} [options.ephemeralSession] SSO. It only affects iOS with versions 13 and above.
-   * @param {String} [options.login_hint] (optional). Provides a hint to Microsoft Entra ID 
+   * @param {String} [options.login_hint] (optional) Provides a hint to Microsoft Entra ID
    *    about the user account attempting to sign in
-   *    @see https://learn.microsoft.com/en-us/entra/identity-platform/msal-js-sso#using-a-login-hint
-   * @returns {Promise<BaseTokenItem | AccessTokenItem>}
+   * @param {Object} [options.extraQueryParameters] (optional) Additional query parameters to include in the authorization request.
+   *    Should be an object with string or number values (e.g., {domain_hint: 'contoso.com', custom_param: 'value'})
+   * @returns {Promise<BaseTokenItem | AccessTokenItem>} Promise that resolves to a BaseTokenItem or AccessTokenItem containing the authentication result
+   * @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes
+   * @see https://learn.microsoft.com/en-us/entra/identity-platform/msal-js-sso#using-a-login-hint
+   * @see https://learn.microsoft.com/en-us/azure/active-directory/develop/v2-oauth2-auth-code-flow
    *
    * @memberof WebAuth
    */
@@ -49,9 +51,11 @@ export default class WebAuth {
 
         const { clientId, client, agent } = this
         const {nonce, state, verifier} = await agent.generateRequestParams()
-
+        const { extraQueryParameters, ...remainingOptions } = options;
+    
         let requestParams = {
-            ...options,
+            ...remainingOptions,
+            ...extraQueryParameters,
             clientId,
             scope: scope.toString(),
             responseType: 'code' + (scope.toString().includes('openid') ? ' id_token': ''),

@@ -232,6 +232,7 @@ declare class Auth {
     code: string;
     redirectUri: string;
     scope: string;
+    extraQueryParameters?: Record<string, string | number>;
   }): Promise<void>;
   /**
    * Builds the full authorize endpoint url in the Authorization Server (AS) with given parameters.
@@ -253,6 +254,7 @@ declare class Auth {
     state: string;
     scope: string;
     prompt?: string;
+    extraQueryParameters?: Record<string, string | number>;
   }): string;
   /**
    * Builds the full logout endpoint url in the Authorization Server (AS) with given parameters.
@@ -305,12 +307,14 @@ declare class WebAuth {
    *    The only valid values at this time are 'login', 'none', and 'consent'.
   * @param {String} [options.login_hint] (optional). Provides a hint to Microsoft Entra ID 
    *    about the user account attempting to sign in
-   *    @see https://learn.microsoft.com/en-us/entra/identity-platform/msal-js-sso#using-a-login-hint 
+   *    @see https://learn.microsoft.com/en-us/entra/identity-platform/msal-js-sso#using-a-login-hint
+   * @param {Object} [options.extraQueryParameters] (optional) Additional query parameters to include in the authorization request
    */
   authorize(options: {
     prompt?: string;
     scope?: string;
     login_hint?: string;
+    extraQueryParameters?: Record<string, string | number>;
   }): Promise<BaseTokenItem & Partial<AccessTokenItem>>;
   /**
    *  Removes Azure session
