@@ -66,7 +66,8 @@ export default class Auth {
                 responseType: { required: true, toName: 'response_type' },
                 scope: { required: true },
                 state: { required: true },
-                prompt: {}
+                prompt: {},
+                extraQueryParameters: { required: false, extend: true }
             },
             validate: false // not declared params are allowed:
         }, parameters)
@@ -111,6 +112,7 @@ export default class Auth {
                 code: { required: true },
                 scope: { required: true },
                 code_verifier: { required: true },
+                extraQueryParameters: { required: false, extend: true },
             }
         }, input)
 
