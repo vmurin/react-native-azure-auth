@@ -55,7 +55,7 @@ export default class WebAuth {
     
         let requestParams = {
             ...remainingOptions,
-            ...extraQueryParameters,
+            ... (extraQueryParameters || {}),
             clientId,
             scope: scope.toString(),
             responseType: 'code' + (scope.toString().includes('openid') ? ' id_token': ''),
