@@ -3,6 +3,7 @@ import { validate } from '../utils/validate'
 import { toCamelCase } from '../utils/camel'
 import AuthError from './authError'
 import TokenCache from '../token/cache'
+import BaseTokenItem from '../token/baseTokenItem'
 import log from '../utils/logger'
 
 import { NativeModules, Platform } from 'react-native'
@@ -198,6 +199,8 @@ export default class Auth {
                 if (tokenResponse && tokenResponse.accessToken) {
                     accessToken = await this.cache.saveAccessToken(tokenResponse)
                     return accessToken
+                } else if (tokenResponse && tokenResponse.idToken) {
+                    return new BaseTokenItem(tokenResponse, this.clientId)
                 }
             }
         } catch (error) {
