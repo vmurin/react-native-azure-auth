@@ -21,7 +21,7 @@ exports[`auth code exchange should send correct payload 1`] = `
     "body": "&code=a%20code&code_verifier=some%20Azure%20verifier%20code&scope=openid&client_id=A_CLIENT_ID_OF_YOUR_ACCOUNT&redirect_uri=my_bundle_id%3A%2F%2Fmy_bundle_id%2FSomeMobile%2Fcallback&grant_type=authorization_code",
     "headers": {
       "Accept": "application/json, image/*;q=0.1",
-      "Content-Length": 211,
+      "Content-Length": "211",
       "Content-Type": "application/x-www-form-urlencoded",
     },
     "method": "POST",
@@ -74,7 +74,7 @@ exports[`auth refresh token should send correct payload 1`] = `
     "body": "&refresh_token=a%20refresh%20token%20of%20a%20user&scope=offline_access%20openid%20profile&client_id=A_CLIENT_ID_OF_YOUR_ACCOUNT&grant_type=refresh_token&redirect_uri=my_bundle_id%3A%2F%2Fmy_bundle_id%2FSomeMobile%2Fcallback",
     "headers": {
       "Accept": "application/json, image/*;q=0.1",
-      "Content-Length": 224,
+      "Content-Length": "224",
       "Content-Type": "application/x-www-form-urlencoded",
     },
     "method": "POST",

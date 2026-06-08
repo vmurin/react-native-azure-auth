@@ -82,7 +82,7 @@ export default class Client {
         if (body) {
             // POST
             options.body = serializeParams(body)
-            options.headers['Content-Length'] = options.body.length
+            options.headers['Content-Length'] = String(options.body.length)
         }
 
         let response = await fetch(url, options)

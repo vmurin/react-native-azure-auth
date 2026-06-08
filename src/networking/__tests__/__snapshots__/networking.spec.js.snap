@@ -73,7 +73,7 @@ exports[`client requests PATCH json should build proper request with body 1`] = 
     "headers": {
       "Accept": "application/json, image/*;q=0.1",
       "Authorization": "Bearer a.bearer.token",
-      "Content-Length": 23,
+      "Content-Length": "23",
       "Content-Type": "application/x-www-form-urlencoded",
     },
     "method": "PATCH",
@@ -136,7 +136,7 @@ exports[`client requests POST json should build proper request with body 1`] = `
     "headers": {
       "Accept": "application/json, image/*;q=0.1",
       "Authorization": "Bearer a.bearer.token",
-      "Content-Length": 23,
+      "Content-Length": "23",
       "Content-Type": "application/x-www-form-urlencoded",
     },
     "method": "POST",
