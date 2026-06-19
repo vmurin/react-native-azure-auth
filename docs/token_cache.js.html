@@ -171,7 +171,6 @@ export default class TokenCache {
      */
     async getAllUserTokenKeys(userId){
         const tokenKeyPrefix = BaseTokenItem.createTokenKeyPrefix(this.clientId, userId)
-        console.info('getting tokens')
         let tokenKeys = []
         if (this.persistent) {
             let keys = await AsyncStorage.getAllKeys()
