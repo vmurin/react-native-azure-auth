@@ -38,12 +38,12 @@ interface TokenResponse {
 }
 
 interface ClientResponse {
-	status:string,
-	ok: boolean,
-  headers: Headers,
-  blob?: Blob,
-  json?: object,
-  text?: string
+  status: string;
+  ok: boolean;
+  headers: Headers;
+  blob?: Blob;
+  json?: object;
+  text?: string;
 }
 /**
  * Helper to perform HTTP requests
@@ -95,11 +95,7 @@ declare class BaseTokenItem {
   tenantId: string;
   idTokenExpireOn: number;
   toString(): string;
-  static createAccessTokenKey(
-    clientId: string,
-    userId: string,
-    scope: Scope
-  ): string;
+  static createAccessTokenKey(clientId: string, userId: string, scope: Scope): string;
   static createRefreshTokenKey(clientId: string, userId: string): string;
   static createTokenKeyPrefix(clientId: string, userId: string): string;
   static rawObjectFromJson(objStr: string): any;
@@ -206,17 +202,14 @@ declare class Auth {
    * @param {String} parameters.scope scopes requested for the issued tokens.
    *
    */
-  acquireTokenSilent: (parameters: {
-    userId: string;
-    scope: string;
-  }) => Promise<AccessTokenItem | null>;
+  acquireTokenSilent: (parameters: { userId: string; scope: string }) => Promise<AccessTokenItem | null>;
   /**
    * Clear persystent cache - AsyncStorage - for given client ID and user ID or ALL users
    *
    * @param {String} [userId] ID of user whose tokens will be cleared/deleted
    *      if ommited - tokens for ALL users and current client will be cleared
    */
-  clearPersistenCache: (userId?: string) => Promise<void>;
+  clearPersistentCache: (userId?: string) => Promise<void>;
   /**
    * Exchanges a code obtained via `/authorize` for the access tokens
    *
@@ -228,11 +221,7 @@ declare class Auth {
    *
    * @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-protocols-oauth-code#request-an-access-token
    */
-  exchange(input: {
-    code: string;
-    redirectUri: string;
-    scope: string;
-  }): Promise<void>;
+  exchange(input: { code: string; redirectUri: string; scope: string }): Promise<void>;
   /**
    * Builds the full authorize endpoint url in the Authorization Server (AS) with given parameters.
    *
@@ -283,11 +272,7 @@ declare class Auth {
    * @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-protocols-oauth-code#refresh-the-access-token
    *
    */
-  refreshTokens: (parameters: {
-    refreshToken: string;
-    scope: string;
-    redirectUri?: string;
-  }) => Promise<TokenResponse>;
+  refreshTokens: (parameters: { refreshToken: string; scope: string; redirectUri?: string }) => Promise<TokenResponse>;
 }
 
 declare class WebAuth {
@@ -303,7 +288,7 @@ declare class WebAuth {
    *    @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes
    * @param {String} [options.prompt] (optional) indicates the type of user interaction that is required.
    *    The only valid values at this time are 'login', 'none', and 'consent'.
-  * @param {String} [options.login_hint] (optional). Provides a hint to Microsoft Entra ID 
+   * @param {String} [options.login_hint] (optional). Provides a hint to Microsoft Entra ID
    *    about the user account attempting to sign in
    *    @see https://learn.microsoft.com/en-us/entra/identity-platform/msal-js-sso#using-a-login-hint
    * @param {Object} [options.extraQueryParameters] (optional) Additional query parameters to include in the authorization request
