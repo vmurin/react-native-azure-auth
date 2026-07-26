@@ -184,4 +184,39 @@ describe('auth', () => {
         })
     })
 
+    describe('clearPersistentCache', () => {
+        const userId = 'user@example.com'
+        const tokenKeys = ['a token key', 'another token key']
+
+        it('should remove all token keys of a user', async () => {
+            const auth = new Auth({authorityUrl, clientId})
+            auth.cache.getAllUserTokenKeys = jest.fn().mockResolvedValue(tokenKeys)
+            auth.cache.removeToken = jest.fn()
+
+            await auth.clearPersistentCache(userId)
+
+            expect(auth.cache.getAllUserTokenKeys).toHaveBeenCalledWith(userId)
+            expect(auth.cache.removeToken.mock.calls).toEqual([[tokenKeys[0]], [tokenKeys[1]]])
+        })
+
+        it('should clear tokens of ALL users if userId is omitted', async () => {
+            const auth = new Auth({authorityUrl, clientId})
+            auth.cache.getAllUserTokenKeys = jest.fn().mockResolvedValue(tokenKeys)
+            auth.cache.removeToken = jest.fn()
+
+            await auth.clearPersistentCache()
+
+            expect(auth.cache.getAllUserTokenKeys).toHaveBeenCalledWith(null)
+        })
+
+        it('should keep the deprecated misspelled alias working', async () => {
+            const auth = new Auth({authorityUrl, clientId})
+            auth.clearPersistentCache = jest.fn()
+
+            await auth.clearPersistenCache(userId)
+
+            expect(auth.clearPersistentCache).toHaveBeenCalledWith(userId)
+        })
+    })
+
 })
