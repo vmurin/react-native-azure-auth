@@ -1,5 +1,5 @@
 module.exports = {
-    "parser": "babel-eslint",
+    "parser": "@babel/eslint-parser",
     "plugins": [
     ],
     "env": {
@@ -12,7 +12,13 @@ module.exports = {
         "plugin:jest/recommended"
     ],
     "parserOptions": {
-        "sourceType": "module"
+        "sourceType": "module",
+        "requireConfigFile": false
+    },
+    // react is a peerDependency and not installed here, so it cannot be
+    // detected automatically - pin the lowest version we support
+    "settings": {
+        "react": { "version": "16.11" }
     },
     "globals": { "fetch": false },
     "rules": {

@@ -2,3 +2,9 @@
 
 # Ignore npm scripts
 scripts/*
+
+# Generated JSDoc output (contains vendored, minified scripts)
+docs/*
+
+# ESLint own config - plain CommonJS, not written in the src code style
+.eslintrc.js

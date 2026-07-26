@@ -10,14 +10,14 @@ export default {
     },
     getItem: (key, value) => {
         return new Promise((resolve) => {
-            return cache.hasOwnProperty(key)
+            return Object.prototype.hasOwnProperty.call(cache, key)
                 ? resolve(cache[key])
                 : resolve(null)
         })
     },
     removeItem: (key) => {
         return new Promise((resolve, reject) => {
-            return cache.hasOwnProperty(key)
+            return Object.prototype.hasOwnProperty.call(cache, key)
                 ? resolve(delete cache[key])
                 : reject('No such key!')
         })

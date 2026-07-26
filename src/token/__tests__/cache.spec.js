@@ -7,12 +7,12 @@ const userId = 'userId'
 
 describe('token Cache', () => {
     afterEach(() => {
-      // clear the instance to allow testing object construction
-      TokenCache["_instance"] = null
+        // clear the instance to allow testing object construction
+        TokenCache['_instance'] = null
     })
 
     it('should be a singleton', () => {
-        const cacheInstance = new TokenCache({clientId: clientId, persistent: true})
+        new TokenCache({clientId: clientId, persistent: true})
         expect((new TokenCache({clientId: '123222'})).clientId).toBe(clientId)
     })
 
@@ -20,23 +20,23 @@ describe('token Cache', () => {
         expect(() => { new TokenCache({wrong: '123222'})} ).toThrow(/Missing/)
     })
 
-    it('should return refresh token', () => {
+    it('should return refresh token', async () => {
         const cacheInstance = new TokenCache({clientId: clientId, persistent: true})
-        expect(cacheInstance.getRefreshToken(userId)).resolves.toMatchSnapshot()
+        await expect(cacheInstance.getRefreshToken(userId)).resolves.toMatchSnapshot()
     })
 
-    it("should default to persistent", () => {
-        expect(new TokenCache({ clientId: "123222" }).persistent).toBe(true)
-        expect(new TokenCache({ clientId: "123222", persistent: null }).persistent).toBe(true)
-        expect(new TokenCache({ clientId: "123222", persistent: undefined }).persistent).toBe(true)
+    it('should default to persistent', () => {
+        expect(new TokenCache({ clientId: '123222' }).persistent).toBe(true)
+        expect(new TokenCache({ clientId: '123222', persistent: null }).persistent).toBe(true)
+        expect(new TokenCache({ clientId: '123222', persistent: undefined }).persistent).toBe(true)
     })
 
-    it("should throw when input parameters are incorrect type", () => {                
-        expect(() => new TokenCache({ clientId: "123222", persistent: "123" }))
+    it('should throw when input parameters are incorrect type', () => {
+        expect(() => new TokenCache({ clientId: '123222', persistent: '123' }))
             .toThrow(/Parameters with wrong type/)
     })
 
-    it("should allow persistence to be disabled", () => {        
-        expect(new TokenCache({ clientId: "123222", persistent: false }).persistent).toBe(false)
+    it('should allow persistence to be disabled', () => {
+        expect(new TokenCache({ clientId: '123222', persistent: false }).persistent).toBe(false)
     })
 })

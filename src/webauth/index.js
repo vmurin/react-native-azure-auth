@@ -51,8 +51,8 @@ export default class WebAuth {
 
         const { clientId, client, agent } = this
         const {nonce, state, verifier} = await agent.generateRequestParams()
-        const { extraQueryParameters, ...remainingOptions } = options;
-    
+        const { extraQueryParameters, ...remainingOptions } = options
+
         let requestParams = {
             ...remainingOptions,
             ...(extraQueryParameters || {}),
@@ -81,7 +81,7 @@ export default class WebAuth {
 
         // Response is returned in hash, but we want to get parsed object
         // Query can be parsed, therefore lets replace hash sign with '?' mark
-        const queryCheck = /\?.*#/; 
+        const queryCheck = /\?.*#/
         if(queryCheck.test(redirectUrl)){
             // If there is already a query string, replace hash with '&' to append to query
             redirectUrl = redirectUrl.replace('#','&')
