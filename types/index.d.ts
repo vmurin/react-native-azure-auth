@@ -211,10 +211,19 @@ declare class Auth {
     scope: string;
   }) => Promise<AccessTokenItem | null>;
   /**
-   * Clear persystent cache - AsyncStorage - for given client ID and user ID or ALL users
+   * Clear persistent cache - AsyncStorage - for given client ID and user ID or ALL users
    *
    * @param {String} [userId] ID of user whose tokens will be cleared/deleted
-   *      if ommited - tokens for ALL users and current client will be cleared
+   *      if omitted - tokens for ALL users and current client will be cleared
+   */
+  clearPersistentCache: (userId?: string) => Promise<void>;
+  /**
+   * Clear persistent cache - AsyncStorage - for given client ID and user ID or ALL users
+   *
+   * @param {String} [userId] ID of user whose tokens will be cleared/deleted
+   *      if omitted - tokens for ALL users and current client will be cleared
+   *
+   * @deprecated since 1.9.5 - misspelled name, use `clearPersistentCache` instead
    */
   clearPersistenCache: (userId?: string) => Promise<void>;
   /**
@@ -303,7 +312,7 @@ declare class WebAuth {
    *    @see https://docs.microsoft.com/en-us/azure/active-directory/develop/active-directory-v2-scopes
    * @param {String} [options.prompt] (optional) indicates the type of user interaction that is required.
    *    The only valid values at this time are 'login', 'none', and 'consent'.
-  * @param {String} [options.login_hint] (optional). Provides a hint to Microsoft Entra ID 
+   * @param {String} [options.login_hint] (optional). Provides a hint to Microsoft Entra ID
    *    about the user account attempting to sign in
    *    @see https://learn.microsoft.com/en-us/entra/identity-platform/msal-js-sso#using-a-login-hint
    * @param {Object} [options.extraQueryParameters] (optional) Additional query parameters to include in the authorization request

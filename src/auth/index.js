@@ -242,18 +242,33 @@ export default class Auth {
     }
 
     /**
-     * Clear persystent cache - AsyncStorage - for given client ID and user ID or ALL users
+     * Clear persistent cache - AsyncStorage - for given client ID and user ID or ALL users
      *
      * @param {String} userId ID of user whose tokens will be cleared/deleted
-     *      if ommited - tokens for ALL users and current client will be cleared
+     *      if omitted - tokens for ALL users and current client will be cleared
      *
      * @memberof Auth
      */
-    async clearPersistenCache(userId = null) {
+    async clearPersistentCache(userId = null) {
         const tokenKeys = await this.cache.getAllUserTokenKeys(userId)
         tokenKeys.forEach((uTokenKey) => {
             this.cache.removeToken(uTokenKey)
         })
+    }
+
+    /**
+     * Clear persistent cache - AsyncStorage - for given client ID and user ID or ALL users
+     *
+     * @param {String} userId ID of user whose tokens will be cleared/deleted
+     *      if omitted - tokens for ALL users and current client will be cleared
+     *
+     * @deprecated since 1.9.5 - misspelled name, use {@link Auth#clearPersistentCache} instead
+     *
+     * @memberof Auth
+     */
+    async clearPersistenCache(userId = null) {
+        log.warn('clearPersistenCache() is deprecated due to a misspelled name, use clearPersistentCache() instead')
+        return this.clearPersistentCache(userId)
     }
 
 }
