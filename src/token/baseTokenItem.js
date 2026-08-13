@@ -99,7 +99,7 @@ export default class BaseTokenItem {
         }
         try {
             return JSON.parse(objStr)
-        } catch (e) {
+        } catch {
             console.warn('Incorect JSON token string: ', objStr)
             return null
         }
