@@ -1,7 +1,8 @@
 # react-native-azure-auth
 
 [![Maintainers Wanted](https://img.shields.io/badge/maintainers-wanted-red.svg)](https://github.com/pickhardt/maintainers-wanted)
-[![CircleCI](https://circleci.com/gh/vmurin/react-native-azure-auth.svg?style=svg)](https://circleci.com/gh/vmurin/react-native-azure-auth)
+[![CI](https://github.com/vmurin/react-native-azure-auth/actions/workflows/ci.yml/badge.svg)](https://github.com/vmurin/react-native-azure-auth/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/vmurin/react-native-azure-auth/branch/master/graph/badge.svg)](https://codecov.io/gh/vmurin/react-native-azure-auth)
 
 React Native library implementing Azure AD OAuth2 API
 

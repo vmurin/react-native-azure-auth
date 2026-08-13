@@ -32,6 +32,6 @@
         "encoding": "utf8",
         "private": false,
         "recurse": true,
-        "template": "./node_modules/minami"
+        "template": "templates/default"
     }
 }
